@@ -4,6 +4,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
 <title>SEO-ОТЧЁТ — mega-orto.ru</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,700;9..144,900&family=Barlow+Condensed:wght@300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
@@ -37,7 +39,9 @@
 
 *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { scroll-behavior: smooth; }
+/* Плавный скролл только там, где задаём в JS (меню, «наверх»), без глобального
+   scroll-behavior — иначе якоря и фокус дают непредсказуемые «улёты» при прокрутке. */
+html { scroll-behavior: auto; }
 
 body {
   font-family: var(--ff-b);
@@ -499,6 +503,63 @@ a:hover { color: #FF8533; }
 @keyframes termBlink {
   0%, 100% { opacity: 1; }
   50% { opacity: 0; }
+}
+
+.audit-terminal-continue-wrap {
+  padding: 16px 28px 22px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  border-top: 1px solid rgba(255,255,255,.06);
+  background: #0a0e17;
+}
+.audit-terminal-continue-wrap[hidden] {
+  display: none !important;
+}
+.audit-terminal-continue-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 36rem;
+}
+.audit-terminal-continue-btn {
+  font-family: 'Montserrat', system-ui, sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 10px 22px;
+  border-radius: 8px;
+  border: 1px solid rgba(52, 211, 153, 0.45);
+  background: rgba(52, 211, 153, 0.12);
+  color: #6ee7b7;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.audit-terminal-continue-btn .fa-terminal {
+  font-size: 0.95em;
+  opacity: 0.95;
+}
+.audit-terminal-continue-btn:hover {
+  background: rgba(52, 211, 153, 0.2);
+  border-color: rgba(52, 211, 153, 0.65);
+}
+.audit-terminal-continue-btn:focus-visible {
+  outline: 2px solid #34d399;
+  outline-offset: 2px;
+}
+.audit-terminal-continue-hint {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.72rem;
+  color: #64748b;
+  margin: 0;
+  text-align: center;
+  line-height: 1.5;
+  width: 100%;
 }
 
 .audit-scores-section { margin-bottom: 28px; }
@@ -1484,7 +1545,951 @@ a:hover { color: #FF8533; }
   .kf-donut-arc { animation: none; }
 }
 
-.kf-empty-hint { color: #94A3B8; font-size: .85rem; }</style>
+.kf-empty-hint { color: #94A3B8; font-size: .85rem; }
+.section-hdr {
+  margin-bottom: 32px;
+  padding: 0 0 24px;
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+}
+
+.section-hdr::before {
+  content: '';
+  display: block;
+  width: 48px;
+  height: 3px;
+  background: var(--accent);
+  border-radius: 1px;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.section-num {
+  font-family: var(--ff-m);
+  font-size: .62rem;
+  font-weight: 700;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  flex-shrink: 0;
+}
+
+.section-title {
+  font-family: var(--ff-h);
+  font-size: clamp(18px, 2.1vw, 26px);
+  font-weight: 700;
+  letter-spacing: -.01em;
+  line-height: 1.2;
+  color: var(--ink);
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.rpt-sc-summary {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  padding: 20px 28px;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  margin-bottom: 28px;
+}
+
+.rpt-sc-summary__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--ink2);
+}
+
+.rpt-sc-summary__value {
+  font-family: var(--ff-h);
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--ink);
+}
+
+.rpt-sc-cluster {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  padding: 24px 28px;
+  margin-bottom: 20px;
+}
+
+.rpt-sc-cluster__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.rpt-sc-cluster__title {
+  font-family: var(--ff-h);
+  font-weight: 700;
+  font-size: 17px;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rpt-sc-cluster__title i {
+  color: var(--accent);
+  font-size: 0.9em;
+}
+
+.rpt-sc-cluster__meta {
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+  color: var(--ink3);
+}
+
+.rpt-sc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.rpt-sc-table th {
+  text-align: left;
+  padding: 8px 12px;
+  font-family: var(--ff-h);
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink3);
+  border-bottom: 1px solid var(--rule);
+}
+
+.rpt-sc-table td {
+  padding: 7px 12px;
+  color: var(--ink2);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.rpt-sc-table tr:last-child td {
+  border-bottom: none;
+}
+
+.rpt-sc-table .rpt-sc-col-freq {
+  text-align: center;
+  font-family: var(--ff-m);
+  font-size: 12px;
+}
+
+.rpt-sc-table .rpt-sc-col-url {
+  font-family: var(--ff-m);
+  font-size: 11px;
+  color: var(--ink3);
+  word-break: break-all;
+}
+
+.rpt-sc-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  padding: 6px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink2);
+  font-size: 12px;
+  cursor: pointer;
+  transition: color .2s, border-color .2s;
+}
+
+.rpt-sc-toggle:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.rpt-sc-toggle i {
+  transition: transform .2s;
+}
+
+.rpt-sc-toggle--open i {
+  transform: rotate(180deg);
+}
+
+.rpt-sc-subs {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--rule);
+}
+
+.rpt-sc-subs__label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--ff-h);
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--ink3);
+  margin-bottom: 12px;
+}
+
+.rpt-sc-subs__label i {
+  color: var(--accent);
+  font-size: 11px;
+}
+
+.rpt-sc-subs__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 8px;
+}
+
+.rpt-sc-sub {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: border-color .2s;
+}
+
+.rpt-sc-sub:hover {
+  border-color: rgba(255,107,0,0.3);
+}
+
+.rpt-sc-sub--open {
+  border-color: var(--accent);
+}
+
+.rpt-sc-sub__toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 14px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+}
+
+.rpt-sc-sub__name {
+  font-family: var(--ff-h);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--ink);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rpt-sc-sub__stats {
+  font-family: var(--ff-m);
+  font-size: 11px;
+  color: var(--ink3);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.rpt-sc-sub__toggle i {
+  color: var(--ink3);
+  font-size: 10px;
+  transition: transform .25s;
+  flex-shrink: 0;
+}
+
+.rpt-sc-sub--open .rpt-sc-sub__toggle i {
+  transform: rotate(180deg);
+}
+
+.rpt-sc-sub__body {
+  padding: 0 14px 12px;
+}
+
+.rpt-sc-table--sub {
+  font-size: 12px;
+}
+
+.rpt-sc-table--sub td {
+  padding: 5px 10px;
+}
+
+.rpt-sc-hidden-row {
+  display: none;
+}
+
+tr.rpt-sc-hidden-row--visible {
+  display: table-row;
+}
+
+div.rpt-sc-hidden-row--visible {
+  display: block;
+}
+
+.rpt-sc-cluster--hidden {
+  display: none;
+}
+
+.rpt-sc-cluster--hidden.rpt-sc-cluster--shown {
+  display: block;
+}
+
+.rpt-sc-blocks-toggle {
+  margin-top: 4px;
+}
+
+/* ── Top section: L1 → L2 ──────────────────────────────────────── */
+.rpt-tree-top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 24px;
+}
+
+.rpt-tree-top__node {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  padding: 14px 24px;
+  text-align: center;
+  min-width: 140px;
+}
+
+.rpt-tree-top__node--home {
+  border-color: var(--accent);
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px rgba(255, 107, 0, 0.12);
+}
+
+.rpt-tree-top__title {
+  font-family: var(--ff-h);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--ink);
+  margin-bottom: 2px;
+}
+
+.rpt-tree-top__url {
+  font-family: var(--ff-m);
+  font-size: 10px;
+  color: var(--ink3);
+}
+
+.rpt-tree-top__line {
+  width: 2px;
+  height: 28px;
+  background: var(--rule);
+}
+
+/* ── Column grid: L3 cards with L4 inside ─────────────────────── */
+.rpt-tree-cols {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+  align-items: stretch;
+}
+
+.rpt-tree-col {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.rpt-tree-col__head {
+  position: relative;
+  padding: 14px 16px 12px;
+  background: var(--surface);
+}
+
+.rpt-tree-col__foot {
+  margin-top: auto;
+  padding: 10px 16px 14px;
+  background: var(--surface);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.rpt-tree-col__title {
+  font-family: var(--ff-h);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--ink);
+  margin-bottom: 2px;
+  padding-right: 24px;
+}
+
+.rpt-tree-col__url {
+  font-family: var(--ff-m);
+  font-size: 9px;
+  color: var(--ink3);
+  word-break: break-all;
+}
+
+.rpt-tree-col__items {
+  flex: 1;
+  min-height: 0;
+  padding: 4px 0 10px;
+  background: var(--surface);
+}
+
+.rpt-tree-col__item {
+  position: relative;
+  padding: 6px 16px 6px 28px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.rpt-tree-col__item::before {
+  content: '';
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.rpt-tree-col__item:last-child {
+  border-bottom: none;
+}
+
+.rpt-tree-col__item--hidden {
+  display: none;
+}
+
+.rpt-tree-col__item--hidden.rpt-tree-col__item--shown {
+  display: block;
+}
+
+/* Вложенность ур. 5–6 под элементами колонки */
+.rpt-tree-deep__children {
+  margin-top: 8px;
+  padding-left: 12px;
+  border-left: 2px solid rgba(255, 107, 0, 0.2);
+}
+
+.rpt-tree-deep__children--under-item {
+  margin-top: 10px;
+  width: 100%;
+}
+
+.rpt-tree-deep__branch {
+  margin-bottom: 6px;
+}
+
+.rpt-tree-deep__branch:last-child {
+  margin-bottom: 0;
+}
+
+.rpt-tree-col__item--nested {
+  position: relative;
+  margin-top: 6px;
+  padding: 8px 28px 8px 10px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+}
+
+.rpt-tree-col__item--nested[data-rpt-st-depth="5"],
+.rpt-tree-col__item--nested[data-rpt-st-depth="6"] {
+  background: rgba(168, 85, 247, 0.06);
+}
+
+.rpt-tree-col__item-name {
+  font-family: var(--ff-h);
+  font-weight: 600;
+  font-size: 11px;
+  color: var(--ink2);
+  padding-right: 20px;
+}
+
+.rpt-tree-col__item-url {
+  font-family: var(--ff-m);
+  font-size: 8px;
+  color: var(--ink3);
+  word-break: break-all;
+  margin-top: 8px;
+}
+
+.rpt-tree-col__item-badge {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-size: 10px;
+  cursor: pointer;
+  transition: transform .2s;
+}
+
+.rpt-tree-col__item-badge:hover {
+  transform: translateY(-50%) scale(1.15);
+}
+
+.rpt-tree-col__more {
+  display: block;
+  width: 100%;
+  padding: 8px;
+  border: none;
+  border-top: 1px solid var(--rule);
+  background: transparent;
+  color: var(--ink3);
+  font-size: 11px;
+  font-family: var(--ff-h);
+  cursor: pointer;
+  transition: color .2s;
+}
+
+.rpt-tree-col__more:hover {
+  color: var(--accent);
+}
+
+/* ── Badge on top-level (L1/L2) nodes ─────────────────────────── */
+.rpt-tree-top__node .rpt-tree__node-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-size: 11px;
+  cursor: pointer;
+  transition: transform .2s;
+  z-index: 2;
+}
+
+.rpt-tree-top__node .rpt-tree__node-badge:hover {
+  transform: scale(1.15);
+}
+
+/* ── Badge on L3 column heads ─────────────────────────────────── */
+.rpt-tree-col__head .rpt-tree__node-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-size: 11px;
+  cursor: pointer;
+  transition: transform .2s, box-shadow .2s;
+  z-index: 2;
+  box-shadow: 0 2px 8px rgba(255,107,0,0.3);
+}
+
+.rpt-tree-col__head .rpt-tree__node-badge:hover {
+  transform: scale(1.15);
+  box-shadow: 0 2px 12px rgba(255,107,0,0.5);
+}
+
+/* ── Modal overlay ────────────────────────────────────────────── */
+.rpt-st-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.rpt-st-overlay--visible {
+  display: block;
+}
+
+.rpt-st-modal {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 910;
+  background: var(--surface-2);
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  padding: 28px 32px 24px;
+  width: min(92vw, 760px);
+  max-height: 82vh;
+  overflow-y: auto;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
+  text-align: left;
+}
+
+.rpt-st-modal--visible {
+  display: block;
+}
+
+.rpt-st-modal__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.rpt-st-modal__title {
+  font-family: var(--ff-h);
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--ink);
+}
+
+.rpt-st-modal__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink3);
+  font-size: 14px;
+  cursor: pointer;
+  transition: color .2s, border-color .2s;
+  flex-shrink: 0;
+}
+
+.rpt-st-modal__close:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.rpt-st-modal__table-wrap {
+  overflow-x: auto;
+}
+
+.rpt-st-modal table {
+  width: 100%;
+  min-width: 380px;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.rpt-st-modal th {
+  text-align: left;
+  padding: 8px 12px;
+  font-family: var(--ff-h);
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--ink3);
+  border-bottom: 1px solid var(--rule);
+  white-space: nowrap;
+}
+
+.rpt-st-modal td {
+  padding: 6px 12px;
+  color: var(--ink2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.rpt-st-modal tr:last-child td {
+  border-bottom: none;
+}
+
+.rpt-st-modal .rpt-st-freq {
+  text-align: center;
+  font-family: var(--ff-m);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.rpt-st-modal .rpt-st-url {
+  font-family: var(--ff-m);
+  font-size: 11px;
+  color: var(--ink3);
+  word-break: break-all;
+}
+
+.rpt-st-modal__section-title {
+  font-family: var(--ff-h);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--ink2);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 18px 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.rpt-st-modal__section-title:first-child {
+  margin-top: 0;
+}
+
+.rpt-st-modal__section-title i {
+  font-size: 11px;
+  color: var(--accent);
+}
+
+.rpt-st-modal__kids {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.rpt-st-modal__kid {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.rpt-st-modal__kid-name {
+  font-family: var(--ff-h);
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--ink);
+  margin-bottom: 2px;
+}
+
+.rpt-st-modal__kid-url {
+  font-family: var(--ff-m);
+  font-size: 10px;
+  color: var(--ink3);
+  word-break: break-all;
+  margin-bottom: 6px;
+}
+
+.rpt-st-modal__kid-expand {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: none;
+  background: transparent;
+  color: var(--accent);
+  font-size: 11px;
+  font-family: var(--ff-h);
+  cursor: pointer;
+  padding: 2px 0;
+}
+
+.rpt-st-modal__kid-expand i {
+  font-size: 9px;
+  transition: transform .2s;
+}
+
+.rpt-st-modal__kid-expand:hover {
+  text-decoration: underline;
+}
+
+.rpt-st-modal__kid-queries .rpt-st-modal__table-wrap {
+  margin-top: 8px;
+}
+
+.rpt-st-modal__kid-queries table {
+  font-size: 11px;
+}
+
+/* ── Синий «+»: некоммерческие страницы — угол карточки «Главная» (как оранжевый справа) ─── */
+.rpt-tree-top__node--home > .rpt-nc-badge {
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--neon);
+  color: #fff;
+  font-size: 11px;
+  cursor: pointer;
+  z-index: 4;
+  border: none;
+  padding: 0;
+  box-shadow: 0 2px 10px rgba(30, 107, 255, 0.4);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.rpt-tree-top__node--home > .rpt-nc-badge:hover {
+  transform: scale(1.12);
+  box-shadow: 0 2px 14px rgba(30, 107, 255, 0.55);
+}
+
+/* Только кнопка, когда нет строки «Главная» в данных */
+.rpt-tree-top__node--nc-fallback {
+  min-height: 48px;
+  min-width: 140px;
+  padding: 14px 24px;
+}
+
+.rpt-st-empty-hint {
+  margin: 0 0 12px;
+  font-size: 14px;
+  color: var(--ink3);
+  font-family: var(--ff-h);
+}
+
+.rpt-nc-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.rpt-nc-overlay--visible {
+  display: block;
+}
+
+.rpt-nc-modal {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 910;
+  background: var(--surface-2);
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  padding: 26px 28px 22px;
+  width: min(92vw, 480px);
+  max-height: 82vh;
+  overflow-y: auto;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
+  text-align: left;
+}
+
+.rpt-nc-modal--visible {
+  display: block;
+}
+
+.rpt-nc-modal__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.rpt-nc-modal__title {
+  font-family: var(--ff-h);
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--ink);
+}
+
+.rpt-nc-modal__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink3);
+  font-size: 14px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+  flex-shrink: 0;
+}
+
+.rpt-nc-modal__close:hover {
+  color: var(--neon);
+  border-color: var(--neon-dim);
+}
+
+.rpt-nc-modal__lead {
+  margin: 0 0 16px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink2);
+}
+
+.rpt-nc-modal__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rpt-nc-modal__item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+}
+
+.rpt-nc-modal__item:last-child {
+  margin-bottom: 0;
+}
+
+.rpt-nc-modal__item-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: rgba(30, 107, 255, 0.12);
+  color: var(--neon);
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+.rpt-nc-modal__item-label {
+  font-family: var(--ff-h);
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--ink);
+}
+
+/* ── Responsive ───────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .rpt-tree-cols {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
 </head>
 <body>
 
@@ -1509,7 +2514,7 @@ a:hover { color: #FF8533; }
       </div>
       <div class="mast-cell">
         <span class="mast-lbl">Дата</span>
-        <span class="mast-val mast-val--accent">22.03.2026</span>
+        <span class="mast-val mast-val--accent">25.03.2026</span>
       </div>
     </div>
     <div class="mast-kicker">Полный SEO-отчёт</div>
@@ -1527,6 +2532,12 @@ a:hover { color: #FF8533; }
     <a href="#audit-projections" class="report-nav-link" data-nav><i class="fa-solid fa-rocket"></i> Прогноз</a>
     
     <a href="#kf-analysis" class="report-nav-link" data-nav><i class="fa-solid fa-chart-pie"></i> КФ-анализ</a>
+    
+    
+    <a href="#semantic-core" class="report-nav-link" data-nav><i class="fa-solid fa-key"></i> Сем. ядро</a>
+    
+    
+    <a href="#site-structure" class="report-nav-link" data-nav><i class="fa-solid fa-sitemap"></i> Структура</a>
     
   </div>
 </nav>
@@ -1548,42 +2559,18 @@ a:hover { color: #FF8533; }
       <span class="audit-terminal-dot audit-terminal-dot--g"></span>
       <span class="audit-terminal-bar-title">media-kit-auditor — mega-orto.ru</span>
     </div>
-    <script type="application/json" id="audit-terminal-data">{
-  "domain": "mega-orto.ru",
-  "lines": [
-
-    {"status": "red", "text": "[\u041d\u0435 \u043f\u0440\u043e\u0439\u0434\u0435\u043d\u043e] CANONICAL: \u0412 canonical \u0438\u0441\u043f\u043e\u043b\u044c\u0437\u0443\u0435\u0442\u0441\u044f \u0430\u0431\u0441\u043e\u043b\u044e\u0442\u043d\u044b\u0439 URL \u2014 https://mega-orto.ru/apparaty-dlya-korrekcii"},
-
-    {"status": "red", "text": "[\u041d\u0435 \u043f\u0440\u043e\u0439\u0434\u0435\u043d\u043e] \u041a\u041e\u0414\u042b \u041e\u0428\u0418\u0411\u041e\u041a: \u041d\u0435\u0442 \u0432\u043d\u0443\u0442\u0440\u0435\u043d\u043d\u0438\u0445 \u0441\u0442\u0440\u0430\u043d\u0438\u0446 \u0441 \u043a\u043e\u0434\u043e\u043c \u043e\u0442\u0432\u0435\u0442\u0430 403, 404, 410 \u2014 https://mega-orto.ru/tutora_old (404)"},
-
-    {"status": "red", "text": "[\u041d\u0435 \u043f\u0440\u043e\u0439\u0434\u0435\u043d\u043e] HTTP: SSL-\u0441\u0435\u0440\u0442\u0438\u0444\u0438\u043a\u0430\u0442 \u043d\u0430\u0441\u0442\u0440\u043e\u0435\u043d \u043a\u043e\u0440\u0440\u0435\u043a\u0442\u043d\u043e \u2014 SSL-\u0441\u0435\u0440\u0442\u0438\u0444\u0438\u043a\u0430\u0442 \u0438\u0441\u0442\u0435\u043a\u0430\u0435\u0442 \u0447\u0435\u0440\u0435\u0437 29 \u0434\u043d\u0435\u0439"},
-
-    {"status": "red", "text": "[\u041d\u0435 \u043f\u0440\u043e\u0439\u0434\u0435\u043d\u043e] URL: \u0412 URL \u0438\u0441\u043f\u043e\u043b\u044c\u0437\u0443\u0435\u0442\u0441\u044f \u00ab-\u00bb, \u0430 \u043d\u0435 \u00ab_\u00bb \u2014 https://mega-orto.ru/tutora_old"},
-
-    {"status": "red", "text": "[\u041d\u0435 \u043f\u0440\u043e\u0439\u0434\u0435\u043d\u043e] H1: \u041d\u0435\u0442 \u0441\u0442\u0440\u0430\u043d\u0438\u0446 \u0441 \u043f\u0443\u0441\u0442\u044b\u043c H1 \u2014 https://mega-orto.ru/korsety/korset-sheno, https://mega-orto.ru/tutora_old"},
-
-    {"status": "red", "text": "[\u041d\u0435 \u043f\u0440\u043e\u0439\u0434\u0435\u043d\u043e] H1: \u0414\u043b\u0438\u043d\u0430 H1 \u043e\u043f\u0442\u0438\u043c\u0430\u043b\u044c\u043d\u0430\u044f \u2014 \u043d\u0435 1 \u0441\u043b\u043e\u0432\u043e \u0438 \u043d\u0435 3-4 \u0441\u0442\u0440\u043e\u043a\u0438 \u2014 https://mega-orto.ru/partner"},
-
-    {"status": "red", "text": "[\u041d\u0435 \u043f\u0440\u043e\u0439\u0434\u0435\u043d\u043e] H1: H1 \u0438\u0441\u043f\u043e\u043b\u044c\u0437\u0443\u0435\u0442\u0441\u044f \u0440\u043e\u0432\u043d\u043e 1 \u0440\u0430\u0437 \u043d\u0430 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435 \u2014 https://mega-orto.ru/apparaty-dlya-korrekcii"},
-
-    {"status": "red", "text": "[\u041d\u0435 \u043f\u0440\u043e\u0439\u0434\u0435\u043d\u043e] \u041c\u0418\u041a\u0420\u041e\u0420\u0410\u0417\u041c\u0415\u0422\u041a\u0410: \u041d\u0430\u043b\u0438\u0447\u0438\u0435 \u043c\u0438\u043a\u0440\u043e\u0440\u0430\u0437\u043c\u0435\u0442\u043a\u0438 \u0425\u043b\u0435\u0431\u043d\u044b\u0435 \u043a\u0440\u043e\u0448\u043a\u0438 (BreadcrumbList) \u2014 \u0412 \u0431\u043b\u043e\u043a\u0430\u0445 JSON-LD (application/ld+json) \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u043e"},
-
-    {"status": "red", "text": "[\u041d\u0435 \u043f\u0440\u043e\u0439\u0434\u0435\u043d\u043e] \u041c\u0418\u041a\u0420\u041e\u0420\u0410\u0417\u041c\u0415\u0422\u041a\u0410: \u041d\u0430\u043b\u0438\u0447\u0438\u0435 \u043c\u0438\u043a\u0440\u043e\u0440\u0430\u0437\u043c\u0435\u0442\u043a\u0438 \u041e\u0440\u0433\u0430\u043d\u0438\u0437\u0430\u0446\u0438\u044f (Organization / WebSite) \u2014 \u0412 \u0431\u043b\u043e\u043a\u0430\u0445 JSON-LD (application/ld+json) \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u043e"},
-
-    {"status": "red", "text": "[\u041d\u0435 \u043f\u0440\u043e\u0439\u0434\u0435\u043d\u043e] \u041c\u0418\u041a\u0420\u041e\u0420\u0410\u0417\u041c\u0415\u0422\u041a\u0410: \u041d\u0430\u043b\u0438\u0447\u0438\u0435 \u043c\u0438\u043a\u0440\u043e\u0440\u0430\u0437\u043c\u0435\u0442\u043a\u0438 \u0420\u0435\u0439\u0442\u0438\u043d\u0433/\u041e\u0442\u0437\u044b\u0432\u044b (AggregateRating + Review) \u2014 \u0412 \u0431\u043b\u043e\u043a\u0430\u0445 JSON-LD (application/ld+json) \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u043e"},
-
-    {"status": "red", "text": "[\u041d\u0435 \u043f\u0440\u043e\u0439\u0434\u0435\u043d\u043e] \u041c\u0418\u041a\u0420\u041e\u0420\u0410\u0417\u041c\u0415\u0422\u041a\u0410: \u041d\u0430\u043b\u0438\u0447\u0438\u0435 \u043c\u0438\u043a\u0440\u043e\u0440\u0430\u0437\u043c\u0435\u0442\u043a\u0438 \u0412\u043e\u043f\u0440\u043e\u0441/\u041e\u0442\u0432\u0435\u0442 (QAPage) \u2014 \u0412 \u0431\u043b\u043e\u043a\u0430\u0445 JSON-LD (application/ld+json) \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u043e"},
-
-    {"status": "red", "text": "[\u041d\u0435 \u043f\u0440\u043e\u0439\u0434\u0435\u043d\u043e] \u0421\u041a\u041e\u0420\u041e\u0421\u0422\u042c \u0417\u0410\u0413\u0420\u0423\u0417\u041a\u0418: \u0418\u0441\u043f\u043e\u043b\u044c\u0437\u0443\u0435\u0442\u0441\u044f CDN \u2014 CDN-\u0437\u0430\u0433\u043e\u043b\u043e\u0432\u043a\u0438 \u043d\u0435 \u043e\u0431\u043d\u0430\u0440\u0443\u0436\u0435\u043d\u044b"},
-
-    {"status": "red", "text": "[\u041d\u0435 \u043f\u0440\u043e\u0439\u0434\u0435\u043d\u043e] \u0421\u041a\u041e\u0420\u041e\u0421\u0422\u042c \u0417\u0410\u0413\u0420\u0423\u0417\u041a\u0418: \u0418\u0441\u043f\u043e\u043b\u044c\u0437\u0443\u0435\u0442\u0441\u044f \u043a\u0435\u0448\u0438\u0440\u043e\u0432\u0430\u043d\u0438\u0435 \u2014 Cache-Control \u0437\u0430\u0433\u043e\u043b\u043e\u0432\u043e\u043a \u043d\u0435 \u043d\u0430\u0441\u0442\u0440\u043e\u0435\u043d"},
-
-    {"status": "red", "text": "[\u041d\u0435 \u043f\u0440\u043e\u0439\u0434\u0435\u043d\u043e] \u0418\u0417\u041e\u0411\u0420\u0410\u0416\u0415\u041d\u0418\u042f: \u041d\u0435\u0442 \u0438\u0437\u043e\u0431\u0440\u0430\u0436\u0435\u043d\u0438\u0439 \u0431\u0435\u0437 ALT-\u0442\u0435\u043a\u0441\u0442\u0430 (alt=\"\" \u043f\u0443\u0441\u0442\u043e\u0439) \u2014 https://mc.yandex.ru/watch/106916525 \u043d\u0430 https://mega-orto.ru/, https://thb.tildacdn.com/tild3033-6261-4030-b030-383134653533/-/resize/20x/megaorto_logo.png \u043d\u0430 https://mega-orto.ru/, https://static.tildacdn.com/tild6662-3637-4164-a230-653265386163/RoundTelegram.svg \u043d\u0430 https://mega-orto.ru/ \u0438 \u0435\u0449\u0451 254"}
-
-  ]
-}</script>
+    <script type="application/json" id="audit-terminal-data">{"domain":"mega-orto.ru","lines":[{"status":"red","text":"[Не пройдено] CANONICAL: В canonical используется абсолютный URL — https://mega-orto.ru/apparaty-dlya-korrekcii"},{"status":"red","text":"[Не пройдено] КОДЫ ОШИБОК: Нет внутренних страниц с кодом ответа 403, 404, 410 — https://mega-orto.ru/tutora_old (404)"},{"status":"red","text":"[Не пройдено] HTTP: SSL-сертификат настроен корректно — SSL-сертификат истекает через 29 дней"},{"status":"red","text":"[Не пройдено] URL: В URL используется «-», а не «_» — https://mega-orto.ru/tutora_old"},{"status":"red","text":"[Не пройдено] H1: Нет страниц с пустым H1 — https://mega-orto.ru/korsety/korset-sheno, https://mega-orto.ru/tutora_old"},{"status":"red","text":"[Не пройдено] H1: Длина H1 оптимальная — не 1 слово и не 3-4 строки — https://mega-orto.ru/partner"},{"status":"red","text":"[Не пройдено] H1: H1 используется ровно 1 раз на странице — https://mega-orto.ru/apparaty-dlya-korrekcii"},{"status":"red","text":"[Не пройдено] МИКРОРАЗМЕТКА: Наличие микроразметки Хлебные крошки (BreadcrumbList) — В блоках JSON-LD (application/ld+json) не найдено"},{"status":"red","text":"[Не пройдено] МИКРОРАЗМЕТКА: Наличие микроразметки Организация (Organization / WebSite) — В блоках JSON-LD (application/ld+json) не найдено"},{"status":"red","text":"[Не пройдено] МИКРОРАЗМЕТКА: Наличие микроразметки Рейтинг/Отзывы (AggregateRating + Review) — В блоках JSON-LD (application/ld+json) не найдено"},{"status":"red","text":"[Не пройдено] МИКРОРАЗМЕТКА: Наличие микроразметки Вопрос/Ответ (QAPage) — В блоках JSON-LD (application/ld+json) не найдено"},{"status":"red","text":"[Не пройдено] СКОРОСТЬ ЗАГРУЗКИ: Используется CDN — CDN-заголовки не обнаружены"},{"status":"red","text":"[Не пройдено] СКОРОСТЬ ЗАГРУЗКИ: Используется кеширование — Cache-Control заголовок не настроен"},{"status":"red","text":"[Не пройдено] ИЗОБРАЖЕНИЯ: Нет изображений без ALT-текста (alt=\"\" пустой) — https://mc.yandex.ru/watch/106916525 на https://mega-orto.ru/, https://thb.tildacdn.com/tild3033-6261-4030-b030-383134653533/-/resize/20x/megaorto_logo.png на https://mega-orto.ru/, https://static.tildacdn.com/tild6662-3637-4164-a230-653265386163/RoundTelegram.svg на https://mega-orto.ru/ и ещё 254"}]}</script>
     <div class="audit-terminal-body">
-      <pre class="audit-terminal-pre" id="audit-terminal-pre"><span class="term-cursor" aria-hidden="true"></span></pre>
+      <pre class="audit-terminal-pre" id="audit-terminal-pre"></pre>
+    </div>
+    <div class="audit-terminal-continue-wrap" id="audit-terminal-continue-wrap" hidden>
+      <div class="audit-terminal-continue-inner">
+        <button type="button" class="audit-terminal-continue-btn" id="audit-terminal-continue">
+          <i class="fa-solid fa-terminal" aria-hidden="true"></i>
+          <span>Продолжить аудит</span>
+        </button>
+        <p class="audit-terminal-continue-hint" id="audit-terminal-continue-hint" aria-live="polite"></p>
+      </div>
     </div>
   </div>
 </section>
@@ -2355,6 +3342,7 @@ a:hover { color: #FF8533; }
   
   <div class="report-section" id="kf-analysis">
     
+
 
 
 
@@ -4230,9 +5218,2614 @@ a:hover { color: #FF8533; }
   </div>
   
 
+  
+  
+  <div class="report-section" id="semantic-core">
+    <div class="section-hdr">
+      <span class="section-num">05</span>
+      <h2 class="section-title">Семантическое ядро</h2>
+    </div>
+
+    
+    
+    
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+    
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+    
+
+    <div class="rpt-sc-summary">
+      <div class="rpt-sc-summary__item">
+        <i class="fa-solid fa-layer-group" style="color:var(--accent)"></i>
+        <span class="rpt-sc-summary__value">2</span>
+        кластеров
+      </div>
+      <div class="rpt-sc-summary__item">
+        <i class="fa-solid fa-magnifying-glass" style="color:var(--neon)"></i>
+        <span class="rpt-sc-summary__value">189</span>
+        запросов
+      </div>
+      <div class="rpt-sc-summary__item">
+        <i class="fa-solid fa-chart-simple" style="color:var(--green)"></i>
+        <span class="rpt-sc-summary__value">10 414</span>
+        суммарная частотность
+      </div>
+    </div>
+
+    
+    
+    
+    
+    
+      
+      
+      
+      
+        
+      
+    
+    <div class="rpt-sc-cluster" data-rpt-sc-cluster>
+      <div class="rpt-sc-cluster__head">
+        <div class="rpt-sc-cluster__title">
+          <i class="fa-solid fa-layer-group"></i>
+          Главная страница
+        </div>
+        <div class="rpt-sc-cluster__meta">
+          <span>8 запросов</span>
+          <span>Σ 1 314</span>
+        </div>
+      </div>
+
+      
+      
+      <table class="rpt-sc-table">
+        <thead>
+          <tr>
+            <th>Запрос</th>
+            <th class="rpt-sc-col-freq" style="width:100px">Частотность</th>
+            <th class="rpt-sc-col-url" style="width:25%">URL</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td>ортопедический центр</td>
+            <td class="rpt-sc-col-freq">875</td>
+            <td class="rpt-sc-col-url">/</td>
+          </tr>
+          
+          <tr>
+            <td>ортопедический центр спб</td>
+            <td class="rpt-sc-col-freq">139</td>
+            <td class="rpt-sc-col-url">/</td>
+          </tr>
+          
+          <tr>
+            <td>ортопедический центр петербург</td>
+            <td class="rpt-sc-col-freq">97</td>
+            <td class="rpt-sc-col-url">/</td>
+          </tr>
+          
+          <tr>
+            <td>ортопедический центр санкт петербург</td>
+            <td class="rpt-sc-col-freq">95</td>
+            <td class="rpt-sc-col-url">/</td>
+          </tr>
+          
+          <tr>
+            <td>протезно ортопедический центр</td>
+            <td class="rpt-sc-col-freq">52</td>
+            <td class="rpt-sc-col-url">/</td>
+          </tr>
+          
+          <tr>
+            <td>ортопедический центр официальный сайт</td>
+            <td class="rpt-sc-col-freq">28</td>
+            <td class="rpt-sc-col-url">/</td>
+          </tr>
+          
+          <tr>
+            <td>ортопедический центр телефон</td>
+            <td class="rpt-sc-col-freq">22</td>
+            <td class="rpt-sc-col-url">/</td>
+          </tr>
+          
+          <tr>
+            <td>ортопедический центр в питере</td>
+            <td class="rpt-sc-col-freq">6</td>
+            <td class="rpt-sc-col-url">/</td>
+          </tr>
+          
+        </tbody>
+      </table>
+      
+      
+
+      
+      
+    </div>
+    
+    
+    
+    
+    
+      
+      
+      
+      
+        
+      
+    
+      
+      
+      
+      
+        
+      
+    
+      
+      
+      
+      
+        
+      
+    
+      
+      
+      
+      
+        
+      
+    
+      
+      
+      
+      
+        
+      
+    
+      
+      
+      
+      
+        
+      
+    
+    <div class="rpt-sc-cluster" data-rpt-sc-cluster>
+      <div class="rpt-sc-cluster__head">
+        <div class="rpt-sc-cluster__title">
+          <i class="fa-solid fa-layer-group"></i>
+          Услуги
+        </div>
+        <div class="rpt-sc-cluster__meta">
+          <span>181 запросов</span>
+          <span>Σ 9 100</span>
+        </div>
+      </div>
+
+      
+      
+
+      
+      
+      <div class="rpt-sc-subs">
+        <div class="rpt-sc-subs__label">
+          <i class="fa-solid fa-folder-tree"></i>
+          Подгруппы · 6
+        </div>
+        <div class="rpt-sc-subs__grid">
+          
+          
+          <div class="rpt-sc-sub" data-rpt-sc-sub>
+            <button type="button" class="rpt-sc-sub__toggle" data-rpt-sc-sub-toggle>
+              <span class="rpt-sc-sub__name">Изготовление аппарата на голеностопный сустав на заказ</span>
+              <span class="rpt-sc-sub__stats">6 · Σ 266</span>
+              <i class="fa-solid fa-chevron-down"></i>
+            </button>
+            <div class="rpt-sc-sub__body" style="display:none">
+              <table class="rpt-sc-table rpt-sc-table--sub">
+                <tbody>
+                  
+                  <tr>
+                    <td>аппарат на голеностопный</td>
+                    <td class="rpt-sc-col-freq">107</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-apparata-na-golenostopnyj-sustav</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>аппарат на голеностопный сустав</td>
+                    <td class="rpt-sc-col-freq">105</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-apparata-na-golenostopnyj-sustav</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>аппарат на голеностоп</td>
+                    <td class="rpt-sc-col-freq">29</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-apparata-na-golenostopnyj-sustav</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>аппарат на голеностопный сустав для детей</td>
+                    <td class="rpt-sc-col-freq">17</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-apparata-na-golenostopnyj-sustav</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>аппарат на голеностопный сустав фото</td>
+                    <td class="rpt-sc-col-freq">5</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-apparata-na-golenostopnyj-sustav</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>аппарат на голеностопный сустав цена</td>
+                    <td class="rpt-sc-col-freq">3</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-apparata-na-golenostopnyj-sustav</td>
+                  </tr>
+                  
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+          
+          <div class="rpt-sc-sub" data-rpt-sc-sub>
+            <button type="button" class="rpt-sc-sub__toggle" data-rpt-sc-sub-toggle>
+              <span class="rpt-sc-sub__name">Изготовление аппарата на коленный сустав на заказ</span>
+              <span class="rpt-sc-sub__stats">9 · Σ 193</span>
+              <i class="fa-solid fa-chevron-down"></i>
+            </button>
+            <div class="rpt-sc-sub__body" style="display:none">
+              <table class="rpt-sc-table rpt-sc-table--sub">
+                <tbody>
+                  
+                  <tr>
+                    <td>аппарат на коленный сустав</td>
+                    <td class="rpt-sc-col-freq">118</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-apparata-na-kolennyj-sustav</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>аппарат на колено</td>
+                    <td class="rpt-sc-col-freq">31</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-apparata-na-kolennyj-sustav</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>аппарат на коленный сустав купить</td>
+                    <td class="rpt-sc-col-freq">15</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-apparata-na-kolennyj-sustav</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>аппарат на голеностопный и коленный сустав</td>
+                    <td class="rpt-sc-col-freq">12</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-apparata-na-kolennyj-sustav</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>аппарат на коленный сустав по сертификату</td>
+                    <td class="rpt-sc-col-freq">10</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-apparata-na-kolennyj-sustav</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>аппарат на коленный и тазобедренный сустав</td>
+                    <td class="rpt-sc-col-freq">3</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-apparata-na-kolennyj-sustav</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>аппарат на коленный сустав фото</td>
+                    <td class="rpt-sc-col-freq">2</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-apparata-na-kolennyj-sustav</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>аппарат на коленный сустав цена</td>
+                    <td class="rpt-sc-col-freq">1</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-apparata-na-kolennyj-sustav</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>аппарат на коленный сустав для детей</td>
+                    <td class="rpt-sc-col-freq">1</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-apparata-na-kolennyj-sustav</td>
+                  </tr>
+                  
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+          
+          <div class="rpt-sc-sub" data-rpt-sc-sub>
+            <button type="button" class="rpt-sc-sub__toggle" data-rpt-sc-sub-toggle>
+              <span class="rpt-sc-sub__name">Изготовление индивидуальных ортопедических стелек на заказ</span>
+              <span class="rpt-sc-sub__stats">40 · Σ 5 883</span>
+              <i class="fa-solid fa-chevron-down"></i>
+            </button>
+            <div class="rpt-sc-sub__body" style="display:none">
+              <table class="rpt-sc-table rpt-sc-table--sub">
+                <tbody>
+                  
+                  <tr>
+                    <td>индивидуальные ортопедические стельки</td>
+                    <td class="rpt-sc-col-freq">1764</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>ортопедические стельки индивидуальное изготовление</td>
+                    <td class="rpt-sc-col-freq">555</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>индивидуальные ортопедические стельки в спб</td>
+                    <td class="rpt-sc-col-freq">545</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>стельки ортопедические индивидуальные заказать</td>
+                    <td class="rpt-sc-col-freq">420</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>стельки ортопедические индивидуальные заказать спб</td>
+                    <td class="rpt-sc-col-freq">327</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>индивидуальные ортопедические стельки на заказ</td>
+                    <td class="rpt-sc-col-freq">247</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>изготовление индивидуальных ортопедических стелек в спб</td>
+                    <td class="rpt-sc-col-freq">215</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>индивидуальные ортопедические стельки цена</td>
+                    <td class="rpt-sc-col-freq">209</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>индивидуальные ортопедические стельки на заказ в спб</td>
+                    <td class="rpt-sc-col-freq">174</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>индивидуальные ортопедические стельки санкт петербург</td>
+                    <td class="rpt-sc-col-freq">164</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>стельки ортопедические индивидуальные петербург</td>
+                    <td class="rpt-sc-col-freq">164</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>индивидуальные ортопедические стельки цена спб</td>
+                    <td class="rpt-sc-col-freq">162</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>ортопедические стельки индивидуальное изготовление в санкт петербурге</td>
+                    <td class="rpt-sc-col-freq">126</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>индивидуальные стельки ортопедические изготовление цена</td>
+                    <td class="rpt-sc-col-freq">97</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>индивидуальные стельки ортопедические изготовление цена в спб</td>
+                    <td class="rpt-sc-col-freq">74</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>где заказать индивидуальные ортопедические стельки</td>
+                    <td class="rpt-sc-col-freq">68</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>индивидуальные ортопедические стельки на заказ цена</td>
+                    <td class="rpt-sc-col-freq">63</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>индивидуальная ортопедическая стелька заказать цена</td>
+                    <td class="rpt-sc-col-freq">48</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>где заказать стельки ортопедические индивидуальные спб</td>
+                    <td class="rpt-sc-col-freq">47</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>индивидуальные ортопедические стельки отзывы</td>
+                    <td class="rpt-sc-col-freq">45</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>стельки ортопедические индивидуальные заказать спб цена</td>
+                    <td class="rpt-sc-col-freq">45</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>индивидуальные ортопедические стельки при плоскостопии</td>
+                    <td class="rpt-sc-col-freq">30</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>сделать индивидуальные ортопедические стельки</td>
+                    <td class="rpt-sc-col-freq">27</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>индивидуальные ортопедические стельки купить</td>
+                    <td class="rpt-sc-col-freq">26</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>ортопедический салон стельки индивидуальное</td>
+                    <td class="rpt-sc-col-freq">24</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>стельки ортопедические индивидуальные хорошие</td>
+                    <td class="rpt-sc-col-freq">22</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>ортопедические индивидуальные стельки купить спб</td>
+                    <td class="rpt-sc-col-freq">20</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>индивидуальные ортопедические стельки спб отзывы</td>
+                    <td class="rpt-sc-col-freq">19</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>где можно заказать индивидуальные ортопедические стельки</td>
+                    <td class="rpt-sc-col-freq">19</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>изготовить индивидуальные ортопедические стельки</td>
+                    <td class="rpt-sc-col-freq">17</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>ортопедические стельки изготавливаемые индивидуально</td>
+                    <td class="rpt-sc-col-freq">17</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>заказать стельки ортопедические индивидуальные в санкт петербурге</td>
+                    <td class="rpt-sc-col-freq">17</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>сколько стоят индивидуальные ортопедические стельки</td>
+                    <td class="rpt-sc-col-freq">17</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>недорогие индивидуальные ортопедические стельки</td>
+                    <td class="rpt-sc-col-freq">12</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>сделать индивидуальные ортопедические стельки в спб</td>
+                    <td class="rpt-sc-col-freq">11</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>адреса изготовления индивидуальных ортопедических стелек</td>
+                    <td class="rpt-sc-col-freq">11</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>стоимость индивидуальных ортопедических стелек</td>
+                    <td class="rpt-sc-col-freq">10</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>заказать индивидуальные ортопедические стельки недорого</td>
+                    <td class="rpt-sc-col-freq">9</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>индивидуальная ортопедическая стелька спортивная</td>
+                    <td class="rpt-sc-col-freq">9</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>индивидуальные ортопедические стельки спб недорого</td>
+                    <td class="rpt-sc-col-freq">7</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek</td>
+                  </tr>
+                  
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+          
+          <div class="rpt-sc-sub" data-rpt-sc-sub>
+            <button type="button" class="rpt-sc-sub__toggle" data-rpt-sc-sub-toggle>
+              <span class="rpt-sc-sub__name">Изготовление корсета для коррекции осанки на заказ</span>
+              <span class="rpt-sc-sub__stats">72 · Σ 1 898</span>
+              <i class="fa-solid fa-chevron-down"></i>
+            </button>
+            <div class="rpt-sc-sub__body" style="display:none">
+              <table class="rpt-sc-table rpt-sc-table--sub">
+                <tbody>
+                  
+                  <tr>
+                    <td>корсет для осанки</td>
+                    <td class="rpt-sc-col-freq">683</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсет для осанки от сутулости</td>
+                    <td class="rpt-sc-col-freq">118</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсет осанка взрослый</td>
+                    <td class="rpt-sc-col-freq">97</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>сколько корсет для осанки</td>
+                    <td class="rpt-sc-col-freq">55</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>купить корсет для осанки</td>
+                    <td class="rpt-sc-col-freq">49</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсет для правильной осанки</td>
+                    <td class="rpt-sc-col-freq">47</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсет на заказ</td>
+                    <td class="rpt-sc-col-freq">45</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсет для осанки мужской</td>
+                    <td class="rpt-sc-col-freq">45</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>ортопедический корсет для осанки</td>
+                    <td class="rpt-sc-col-freq">43</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсет для осанки от сутулости взрослый</td>
+                    <td class="rpt-sc-col-freq">39</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсет корректор осанки</td>
+                    <td class="rpt-sc-col-freq">37</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсет для осанки женский</td>
+                    <td class="rpt-sc-col-freq">36</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсеты для осанки спб</td>
+                    <td class="rpt-sc-col-freq">30</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсет для осанки взрослому купить</td>
+                    <td class="rpt-sc-col-freq">30</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсет для осанки спины взрослый купить</td>
+                    <td class="rpt-sc-col-freq">30</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>спиной корсет купить для осанки</td>
+                    <td class="rpt-sc-col-freq">30</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>ортопедический корсет осанка спина</td>
+                    <td class="rpt-sc-col-freq">27</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсет корректор осанки спины</td>
+                    <td class="rpt-sc-col-freq">27</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсет для осанки купить спб</td>
+                    <td class="rpt-sc-col-freq">26</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсет для осанки спины в спб</td>
+                    <td class="rpt-sc-col-freq">24</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсет для осанки спины купить спб</td>
+                    <td class="rpt-sc-col-freq">22</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсет для правильной осанки спины</td>
+                    <td class="rpt-sc-col-freq">20</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсет для осанки от сутулости женский</td>
+                    <td class="rpt-sc-col-freq">19</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсет для исправления осанки</td>
+                    <td class="rpt-sc-col-freq">19</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсет для осанки взрослый женский</td>
+                    <td class="rpt-sc-col-freq">18</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсет исправляющий осанку</td>
+                    <td class="rpt-sc-col-freq">17</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>ортопедический корсет для осанки мужской</td>
+                    <td class="rpt-sc-col-freq">16</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсет для осанки женский от сутулости взрослый</td>
+                    <td class="rpt-sc-col-freq">16</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>хорошие корсеты для осанки</td>
+                    <td class="rpt-sc-col-freq">16</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсет на заказ спб</td>
+                    <td class="rpt-sc-col-freq">13</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсет для позвоночника осанка</td>
+                    <td class="rpt-sc-col-freq">13</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсет осанки цена</td>
+                    <td class="rpt-sc-col-freq">11</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсет для осанки врач</td>
+                    <td class="rpt-sc-col-freq">11</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсет для осанки женский цена</td>
+                    <td class="rpt-sc-col-freq">9</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсет для осанки от сутулости женский цены</td>
+                    <td class="rpt-sc-col-freq">9</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсет для осанки от сутулости цена</td>
+                    <td class="rpt-sc-col-freq">9</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсет для осанки размеры</td>
+                    <td class="rpt-sc-col-freq">8</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсеты для мужчин для осанки</td>
+                    <td class="rpt-sc-col-freq">8</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсет для коррекции осанки</td>
+                    <td class="rpt-sc-col-freq">8</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсет для поддержания осанки</td>
+                    <td class="rpt-sc-col-freq">8</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>пошив корсета на заказ</td>
+                    <td class="rpt-sc-col-freq">7</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсет для осанки от сутулости мужской</td>
+                    <td class="rpt-sc-col-freq">6</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>медицинский корсет для осанки</td>
+                    <td class="rpt-sc-col-freq">6</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>сшить корсет для осанки</td>
+                    <td class="rpt-sc-col-freq">6</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсет ортопедический корректор осанки</td>
+                    <td class="rpt-sc-col-freq">5</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсет на спину для осанки</td>
+                    <td class="rpt-sc-col-freq">5</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсет ортопедический для осанки от сутулости</td>
+                    <td class="rpt-sc-col-freq">5</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>сколько стоит корсет на заказ</td>
+                    <td class="rpt-sc-col-freq">4</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсет для выравнивания осанки</td>
+                    <td class="rpt-sc-col-freq">4</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>коррекционный корсет для осанки</td>
+                    <td class="rpt-sc-col-freq">4</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>хороший корсет для исправления осанки</td>
+                    <td class="rpt-sc-col-freq">4</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсет для исправления осанки женский</td>
+                    <td class="rpt-sc-col-freq">4</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>сшить корсет на заказ</td>
+                    <td class="rpt-sc-col-freq">3</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсеты для позвоночника на заказ</td>
+                    <td class="rpt-sc-col-freq">3</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсет для спины на заказ</td>
+                    <td class="rpt-sc-col-freq">3</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсет осанки жесткий</td>
+                    <td class="rpt-sc-col-freq">3</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсет ортопедический для осанки взрослый</td>
+                    <td class="rpt-sc-col-freq">3</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>ортопедический корсет для осанки женский</td>
+                    <td class="rpt-sc-col-freq">3</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсет для прямой осанки</td>
+                    <td class="rpt-sc-col-freq">3</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсет для осанки для женщин</td>
+                    <td class="rpt-sc-col-freq">3</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсеты для осанки женские купить</td>
+                    <td class="rpt-sc-col-freq">3</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсеты для спины для осанки женские</td>
+                    <td class="rpt-sc-col-freq">3</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>как выбрать корсет для осанки взрослому</td>
+                    <td class="rpt-sc-col-freq">3</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсет для осанки мужской взрослый от сутулости</td>
+                    <td class="rpt-sc-col-freq">3</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсеты для осанки взрослый мужской</td>
+                    <td class="rpt-sc-col-freq">3</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>сколько стоит сшить корсет на заказ</td>
+                    <td class="rpt-sc-col-freq">2</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсет на заказ цена</td>
+                    <td class="rpt-sc-col-freq">2</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсеты на заказ ортопедические</td>
+                    <td class="rpt-sc-col-freq">2</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>изготовление корсетов на заказ</td>
+                    <td class="rpt-sc-col-freq">2</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсет на заказ утягивающий</td>
+                    <td class="rpt-sc-col-freq">1</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>корсет шено на заказ</td>
+                    <td class="rpt-sc-col-freq">1</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>исправить осанку взрослому корсетом</td>
+                    <td class="rpt-sc-col-freq">1</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-korseta-dlya-osanki</td>
+                  </tr>
+                  
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+          
+          <div class="rpt-sc-sub" data-rpt-sc-sub>
+            <button type="button" class="rpt-sc-sub__toggle" data-rpt-sc-sub-toggle>
+              <span class="rpt-sc-sub__name">Изготовление ортеза на ногу на заказ</span>
+              <span class="rpt-sc-sub__stats">39 · Σ 772</span>
+              <i class="fa-solid fa-chevron-down"></i>
+            </button>
+            <div class="rpt-sc-sub__body" style="display:none">
+              <table class="rpt-sc-table rpt-sc-table--sub">
+                <tbody>
+                  
+                  <tr>
+                    <td>ортез на ногу</td>
+                    <td class="rpt-sc-col-freq">348</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-orteza-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>ортез на палец ноги</td>
+                    <td class="rpt-sc-col-freq">142</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-orteza-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>ортез на мизинец ноги</td>
+                    <td class="rpt-sc-col-freq">37</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-orteza-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>ортез на палец на ноге на валберис</td>
+                    <td class="rpt-sc-col-freq">32</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-orteza-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>ортез на ногу при переломе</td>
+                    <td class="rpt-sc-col-freq">31</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-orteza-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>ортез на большой палец ноги</td>
+                    <td class="rpt-sc-col-freq">25</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-orteza-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>ортез при переломе пальца на ноге</td>
+                    <td class="rpt-sc-col-freq">16</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-orteza-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>ортез на правую ногу</td>
+                    <td class="rpt-sc-col-freq">12</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-orteza-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>купить ортез на ногу</td>
+                    <td class="rpt-sc-col-freq">11</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-orteza-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>ортез на ногу на голеностоп</td>
+                    <td class="rpt-sc-col-freq">9</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-orteza-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>ортез на косточку на ноге</td>
+                    <td class="rpt-sc-col-freq">9</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-orteza-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>ортез на ногу на голеностопный</td>
+                    <td class="rpt-sc-col-freq">9</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-orteza-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>жесткий ортез на ногу</td>
+                    <td class="rpt-sc-col-freq">8</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-orteza-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>ортез гипс на ногу</td>
+                    <td class="rpt-sc-col-freq">7</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-orteza-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>ортез на всю ногу жесткой фиксации</td>
+                    <td class="rpt-sc-col-freq">7</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-orteza-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>ортез на сломанную ногу</td>
+                    <td class="rpt-sc-col-freq">7</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-orteza-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>ортез на пальцы ног мизинца</td>
+                    <td class="rpt-sc-col-freq">7</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-orteza-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>ортезы на ногу вместо гипса</td>
+                    <td class="rpt-sc-col-freq">6</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-orteza-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>ортез на сломанный палец ноги</td>
+                    <td class="rpt-sc-col-freq">6</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-orteza-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>купить ортезы на пальцы ног</td>
+                    <td class="rpt-sc-col-freq">5</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-orteza-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>голеностопный ортез на левую ногу</td>
+                    <td class="rpt-sc-col-freq">4</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-orteza-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>ортез на ногу колено</td>
+                    <td class="rpt-sc-col-freq">4</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-orteza-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>ортез на ногу стопа</td>
+                    <td class="rpt-sc-col-freq">3</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-orteza-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>ортез на ногу цена</td>
+                    <td class="rpt-sc-col-freq">3</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-orteza-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>ортез на средний палец ноги</td>
+                    <td class="rpt-sc-col-freq">3</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-orteza-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>ортез на пальцы ног при деформации</td>
+                    <td class="rpt-sc-col-freq">2</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-orteza-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>ортез на ногу ребенку</td>
+                    <td class="rpt-sc-col-freq">2</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-orteza-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>ортез на ногу индивидуальный</td>
+                    <td class="rpt-sc-col-freq">2</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-orteza-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>ортез при переломе стопы на ногу</td>
+                    <td class="rpt-sc-col-freq">2</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-orteza-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>ортез на стопу при переломе пальца ноги</td>
+                    <td class="rpt-sc-col-freq">2</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-orteza-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>ортез на 2 палец ноги</td>
+                    <td class="rpt-sc-col-freq">2</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-orteza-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>ортез на ногу после перелома</td>
+                    <td class="rpt-sc-col-freq">2</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-orteza-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>стоимость ортеза на ногу</td>
+                    <td class="rpt-sc-col-freq">1</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-orteza-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>ортез на мизинец ноги купить</td>
+                    <td class="rpt-sc-col-freq">1</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-orteza-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>ортез на большой палец правой ноги</td>
+                    <td class="rpt-sc-col-freq">1</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-orteza-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>ортез на берцовую кость при переломе ноги</td>
+                    <td class="rpt-sc-col-freq">1</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-orteza-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>ортез на палец ноги при косточке большой</td>
+                    <td class="rpt-sc-col-freq">1</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-orteza-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>ортез на всю ногу взрослый</td>
+                    <td class="rpt-sc-col-freq">1</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-orteza-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>купить ортез на левую ногу</td>
+                    <td class="rpt-sc-col-freq">1</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-orteza-na-nogu</td>
+                  </tr>
+                  
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+          
+          <div class="rpt-sc-sub" data-rpt-sc-sub>
+            <button type="button" class="rpt-sc-sub__toggle" data-rpt-sc-sub-toggle>
+              <span class="rpt-sc-sub__name">Изготовление ортопедического аппарата на ногу на заказ</span>
+              <span class="rpt-sc-sub__stats">15 · Σ 88</span>
+              <i class="fa-solid fa-chevron-down"></i>
+            </button>
+            <div class="rpt-sc-sub__body" style="display:none">
+              <table class="rpt-sc-table rpt-sc-table--sub">
+                <tbody>
+                  
+                  <tr>
+                    <td>аппарат на всю ногу</td>
+                    <td class="rpt-sc-col-freq">47</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-ortopedicheskogo-apparata-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>аппарат на перелом ноги</td>
+                    <td class="rpt-sc-col-freq">16</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-ortopedicheskogo-apparata-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>аппарат на ноги дцп</td>
+                    <td class="rpt-sc-col-freq">5</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-ortopedicheskogo-apparata-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>аппараты на ноги для детей</td>
+                    <td class="rpt-sc-col-freq">4</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-ortopedicheskogo-apparata-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>аппарат на всю ногу для детей</td>
+                    <td class="rpt-sc-col-freq">3</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-ortopedicheskogo-apparata-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>аппарат на ногу ортопедический</td>
+                    <td class="rpt-sc-col-freq">2</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-ortopedicheskogo-apparata-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>аппарат на ногу для реабилитации</td>
+                    <td class="rpt-sc-col-freq">2</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-ortopedicheskogo-apparata-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>аппарат на сломанную ногу</td>
+                    <td class="rpt-sc-col-freq">2</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-ortopedicheskogo-apparata-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>аппараты на всю ногу купить</td>
+                    <td class="rpt-sc-col-freq">1</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-ortopedicheskogo-apparata-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>аппарат на всю ногу для инвалидов</td>
+                    <td class="rpt-sc-col-freq">1</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-ortopedicheskogo-apparata-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>аппарат на всю ногу дцп</td>
+                    <td class="rpt-sc-col-freq">1</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-ortopedicheskogo-apparata-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>аппарат на всю ногу фото</td>
+                    <td class="rpt-sc-col-freq">1</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-ortopedicheskogo-apparata-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>аппарат на ноги и туловище</td>
+                    <td class="rpt-sc-col-freq">1</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-ortopedicheskogo-apparata-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>аппарат на ногу после операции</td>
+                    <td class="rpt-sc-col-freq">1</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-ortopedicheskogo-apparata-na-nogu</td>
+                  </tr>
+                  
+                  <tr>
+                    <td>аппараты на ноги для детей с дцп</td>
+                    <td class="rpt-sc-col-freq">1</td>
+                    <td class="rpt-sc-col-url">/uslugi/izgotovlenie-ortopedicheskogo-apparata-na-nogu</td>
+                  </tr>
+                  
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+        </div>
+        
+        
+      </div>
+      
+    </div>
+    
+
+    
+  </div>
+  
+
+  
+  
+  
+
+  <div class="report-section" id="site-structure">
+    <div class="section-hdr">
+      <span class="section-num">06</span>
+      <h2 class="section-title">Структура сайта</h2>
+    </div>
+
+    
+    
+    
+    
+
+    <div class="rpt-tree-top">
+      
+      <div class="rpt-tree-top__node rpt-tree-top__node--home" data-rpt-st-node="293">
+        
+        <div class="rpt-tree-top__title">Главная</div>
+        <div class="rpt-tree-top__url">/</div>
+        
+        <div class="rpt-tree__node-badge" data-rpt-st-open="293" data-rpt-st-title="Главная (/)" data-rpt-st-hide-subpages="1">
+          <i class="fa-solid fa-plus" style="font-size:9px"></i>
+        </div>
+        
+      </div>
+      
+      
+      <div class="rpt-tree-top__line"></div>
+      
+      <div class="rpt-tree-top__node">
+        <div class="rpt-tree-top__title">Услуги</div>
+        <div class="rpt-tree-top__url">/uslugi</div>
+      </div>
+      
+      <div class="rpt-tree-top__line"></div>
+    </div>
+
+    
+    
+    
+    
+    <div class="rpt-tree-cols">
+      
+      
+      <div class="rpt-tree-col">
+        <div class="rpt-tree-col__head">
+          <div class="rpt-tree-col__title">Изготовление корсета для коррекции осанки на заказ</div>
+          
+          <div class="rpt-tree__node-badge" data-rpt-st-open="295" data-rpt-st-title="Изготовление корсета для коррекции осанки на заказ (/uslugi/izgotovlenie-korseta-dlya-osanki)">
+            <i class="fa-solid fa-plus" style="font-size:9px"></i>
+          </div>
+          
+        </div>
+        
+        <div class="rpt-tree-col__foot">
+          <div class="rpt-tree-col__url">/uslugi/izgotovlenie-korseta-dlya-osanki</div>
+        </div>
+      </div>
+      
+      
+      <div class="rpt-tree-col">
+        <div class="rpt-tree-col__head">
+          <div class="rpt-tree-col__title">Изготовление индивидуальных ортопедических стелек на заказ</div>
+          
+          <div class="rpt-tree__node-badge" data-rpt-st-open="296" data-rpt-st-title="Изготовление индивидуальных ортопедических стелек на заказ (/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek)">
+            <i class="fa-solid fa-plus" style="font-size:9px"></i>
+          </div>
+          
+        </div>
+        
+        <div class="rpt-tree-col__foot">
+          <div class="rpt-tree-col__url">/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek</div>
+        </div>
+      </div>
+      
+      
+      <div class="rpt-tree-col">
+        <div class="rpt-tree-col__head">
+          <div class="rpt-tree-col__title">Изготовление ортеза на ногу на заказ</div>
+          
+          <div class="rpt-tree__node-badge" data-rpt-st-open="297" data-rpt-st-title="Изготовление ортеза на ногу на заказ (/uslugi/izgotovlenie-orteza-na-nogu)">
+            <i class="fa-solid fa-plus" style="font-size:9px"></i>
+          </div>
+          
+        </div>
+        
+        <div class="rpt-tree-col__foot">
+          <div class="rpt-tree-col__url">/uslugi/izgotovlenie-orteza-na-nogu</div>
+        </div>
+      </div>
+      
+      
+      <div class="rpt-tree-col">
+        <div class="rpt-tree-col__head">
+          <div class="rpt-tree-col__title">Изготовление ортопедического аппарата на ногу на заказ</div>
+          
+          <div class="rpt-tree__node-badge" data-rpt-st-open="298" data-rpt-st-title="Изготовление ортопедического аппарата на ногу на заказ (/uslugi/izgotovlenie-ortopedicheskogo-apparata-na-nogu)">
+            <i class="fa-solid fa-plus" style="font-size:9px"></i>
+          </div>
+          
+        </div>
+        
+        <div class="rpt-tree-col__foot">
+          <div class="rpt-tree-col__url">/uslugi/izgotovlenie-ortopedicheskogo-apparata-na-nogu</div>
+        </div>
+      </div>
+      
+      
+      <div class="rpt-tree-col">
+        <div class="rpt-tree-col__head">
+          <div class="rpt-tree-col__title">Изготовление аппарата на коленный сустав на заказ</div>
+          
+          <div class="rpt-tree__node-badge" data-rpt-st-open="299" data-rpt-st-title="Изготовление аппарата на коленный сустав на заказ (/uslugi/izgotovlenie-apparata-na-kolennyj-sustav)">
+            <i class="fa-solid fa-plus" style="font-size:9px"></i>
+          </div>
+          
+        </div>
+        
+        <div class="rpt-tree-col__foot">
+          <div class="rpt-tree-col__url">/uslugi/izgotovlenie-apparata-na-kolennyj-sustav</div>
+        </div>
+      </div>
+      
+      
+      <div class="rpt-tree-col">
+        <div class="rpt-tree-col__head">
+          <div class="rpt-tree-col__title">Изготовление аппарата на голеностопный сустав на заказ</div>
+          
+          <div class="rpt-tree__node-badge" data-rpt-st-open="300" data-rpt-st-title="Изготовление аппарата на голеностопный сустав на заказ (/uslugi/izgotovlenie-apparata-na-golenostopnyj-sustav)">
+            <i class="fa-solid fa-plus" style="font-size:9px"></i>
+          </div>
+          
+        </div>
+        
+        <div class="rpt-tree-col__foot">
+          <div class="rpt-tree-col__url">/uslugi/izgotovlenie-apparata-na-golenostopnyj-sustav</div>
+        </div>
+      </div>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+    <div class="rpt-st-overlay" id="rpt-st-overlay"></div>
+    <div class="rpt-st-modal" id="rpt-st-modal">
+      <div class="rpt-st-modal__head">
+        <div class="rpt-st-modal__title" id="rpt-st-modal-title"></div>
+        <button type="button" class="rpt-st-modal__close" id="rpt-st-modal-close" aria-label="Закрыть">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div id="rpt-st-modal-content"></div>
+    </div>
+
+    
+    <script type="application/json" id="rpt-st-queries-data">
+    {
+      
+      
+      "293": [
+        
+        {"q": "\u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0439 \u0446\u0435\u043d\u0442\u0440", "f": 875, "u": "/"},
+        
+        {"q": "\u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0439 \u0446\u0435\u043d\u0442\u0440 \u0441\u043f\u0431", "f": 139, "u": "/"},
+        
+        {"q": "\u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0439 \u0446\u0435\u043d\u0442\u0440 \u043f\u0435\u0442\u0435\u0440\u0431\u0443\u0440\u0433", "f": 97, "u": "/"},
+        
+        {"q": "\u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0439 \u0446\u0435\u043d\u0442\u0440 \u0441\u0430\u043d\u043a\u0442 \u043f\u0435\u0442\u0435\u0440\u0431\u0443\u0440\u0433", "f": 95, "u": "/"},
+        
+        {"q": "\u043f\u0440\u043e\u0442\u0435\u0437\u043d\u043e \u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0439 \u0446\u0435\u043d\u0442\u0440", "f": 52, "u": "/"},
+        
+        {"q": "\u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0439 \u0446\u0435\u043d\u0442\u0440 \u043e\u0444\u0438\u0446\u0438\u0430\u043b\u044c\u043d\u044b\u0439 \u0441\u0430\u0439\u0442", "f": 28, "u": "/"},
+        
+        {"q": "\u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0439 \u0446\u0435\u043d\u0442\u0440 \u0442\u0435\u043b\u0435\u0444\u043e\u043d", "f": 22, "u": "/"},
+        
+        {"q": "\u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0439 \u0446\u0435\u043d\u0442\u0440 \u0432 \u043f\u0438\u0442\u0435\u0440\u0435", "f": 6, "u": "/"}
+        
+      ],
+      
+      
+      
+      
+      
+      "295": [
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442 \u0434\u043b\u044f \u043e\u0441\u0430\u043d\u043a\u0438", "f": 683, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442 \u0434\u043b\u044f \u043e\u0441\u0430\u043d\u043a\u0438 \u043e\u0442 \u0441\u0443\u0442\u0443\u043b\u043e\u0441\u0442\u0438", "f": 118, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442 \u043e\u0441\u0430\u043d\u043a\u0430 \u0432\u0437\u0440\u043e\u0441\u043b\u044b\u0439", "f": 97, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u0441\u043a\u043e\u043b\u044c\u043a\u043e \u043a\u043e\u0440\u0441\u0435\u0442 \u0434\u043b\u044f \u043e\u0441\u0430\u043d\u043a\u0438", "f": 55, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u0443\u043f\u0438\u0442\u044c \u043a\u043e\u0440\u0441\u0435\u0442 \u0434\u043b\u044f \u043e\u0441\u0430\u043d\u043a\u0438", "f": 49, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442 \u0434\u043b\u044f \u043f\u0440\u0430\u0432\u0438\u043b\u044c\u043d\u043e\u0439 \u043e\u0441\u0430\u043d\u043a\u0438", "f": 47, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442 \u043d\u0430 \u0437\u0430\u043a\u0430\u0437", "f": 45, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442 \u0434\u043b\u044f \u043e\u0441\u0430\u043d\u043a\u0438 \u043c\u0443\u0436\u0441\u043a\u043e\u0439", "f": 45, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0439 \u043a\u043e\u0440\u0441\u0435\u0442 \u0434\u043b\u044f \u043e\u0441\u0430\u043d\u043a\u0438", "f": 43, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442 \u0434\u043b\u044f \u043e\u0441\u0430\u043d\u043a\u0438 \u043e\u0442 \u0441\u0443\u0442\u0443\u043b\u043e\u0441\u0442\u0438 \u0432\u0437\u0440\u043e\u0441\u043b\u044b\u0439", "f": 39, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442 \u043a\u043e\u0440\u0440\u0435\u043a\u0442\u043e\u0440 \u043e\u0441\u0430\u043d\u043a\u0438", "f": 37, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442 \u0434\u043b\u044f \u043e\u0441\u0430\u043d\u043a\u0438 \u0436\u0435\u043d\u0441\u043a\u0438\u0439", "f": 36, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442\u044b \u0434\u043b\u044f \u043e\u0441\u0430\u043d\u043a\u0438 \u0441\u043f\u0431", "f": 30, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442 \u0434\u043b\u044f \u043e\u0441\u0430\u043d\u043a\u0438 \u0432\u0437\u0440\u043e\u0441\u043b\u043e\u043c\u0443 \u043a\u0443\u043f\u0438\u0442\u044c", "f": 30, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442 \u0434\u043b\u044f \u043e\u0441\u0430\u043d\u043a\u0438 \u0441\u043f\u0438\u043d\u044b \u0432\u0437\u0440\u043e\u0441\u043b\u044b\u0439 \u043a\u0443\u043f\u0438\u0442\u044c", "f": 30, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u0441\u043f\u0438\u043d\u043e\u0439 \u043a\u043e\u0440\u0441\u0435\u0442 \u043a\u0443\u043f\u0438\u0442\u044c \u0434\u043b\u044f \u043e\u0441\u0430\u043d\u043a\u0438", "f": 30, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0439 \u043a\u043e\u0440\u0441\u0435\u0442 \u043e\u0441\u0430\u043d\u043a\u0430 \u0441\u043f\u0438\u043d\u0430", "f": 27, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442 \u043a\u043e\u0440\u0440\u0435\u043a\u0442\u043e\u0440 \u043e\u0441\u0430\u043d\u043a\u0438 \u0441\u043f\u0438\u043d\u044b", "f": 27, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442 \u0434\u043b\u044f \u043e\u0441\u0430\u043d\u043a\u0438 \u043a\u0443\u043f\u0438\u0442\u044c \u0441\u043f\u0431", "f": 26, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442 \u0434\u043b\u044f \u043e\u0441\u0430\u043d\u043a\u0438 \u0441\u043f\u0438\u043d\u044b \u0432 \u0441\u043f\u0431", "f": 24, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442 \u0434\u043b\u044f \u043e\u0441\u0430\u043d\u043a\u0438 \u0441\u043f\u0438\u043d\u044b \u043a\u0443\u043f\u0438\u0442\u044c \u0441\u043f\u0431", "f": 22, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442 \u0434\u043b\u044f \u043f\u0440\u0430\u0432\u0438\u043b\u044c\u043d\u043e\u0439 \u043e\u0441\u0430\u043d\u043a\u0438 \u0441\u043f\u0438\u043d\u044b", "f": 20, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442 \u0434\u043b\u044f \u043e\u0441\u0430\u043d\u043a\u0438 \u043e\u0442 \u0441\u0443\u0442\u0443\u043b\u043e\u0441\u0442\u0438 \u0436\u0435\u043d\u0441\u043a\u0438\u0439", "f": 19, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442 \u0434\u043b\u044f \u0438\u0441\u043f\u0440\u0430\u0432\u043b\u0435\u043d\u0438\u044f \u043e\u0441\u0430\u043d\u043a\u0438", "f": 19, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442 \u0434\u043b\u044f \u043e\u0441\u0430\u043d\u043a\u0438 \u0432\u0437\u0440\u043e\u0441\u043b\u044b\u0439 \u0436\u0435\u043d\u0441\u043a\u0438\u0439", "f": 18, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442 \u0438\u0441\u043f\u0440\u0430\u0432\u043b\u044f\u044e\u0449\u0438\u0439 \u043e\u0441\u0430\u043d\u043a\u0443", "f": 17, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0439 \u043a\u043e\u0440\u0441\u0435\u0442 \u0434\u043b\u044f \u043e\u0441\u0430\u043d\u043a\u0438 \u043c\u0443\u0436\u0441\u043a\u043e\u0439", "f": 16, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442 \u0434\u043b\u044f \u043e\u0441\u0430\u043d\u043a\u0438 \u0436\u0435\u043d\u0441\u043a\u0438\u0439 \u043e\u0442 \u0441\u0443\u0442\u0443\u043b\u043e\u0441\u0442\u0438 \u0432\u0437\u0440\u043e\u0441\u043b\u044b\u0439", "f": 16, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u0445\u043e\u0440\u043e\u0448\u0438\u0435 \u043a\u043e\u0440\u0441\u0435\u0442\u044b \u0434\u043b\u044f \u043e\u0441\u0430\u043d\u043a\u0438", "f": 16, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442 \u043d\u0430 \u0437\u0430\u043a\u0430\u0437 \u0441\u043f\u0431", "f": 13, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442 \u0434\u043b\u044f \u043f\u043e\u0437\u0432\u043e\u043d\u043e\u0447\u043d\u0438\u043a\u0430 \u043e\u0441\u0430\u043d\u043a\u0430", "f": 13, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442 \u043e\u0441\u0430\u043d\u043a\u0438 \u0446\u0435\u043d\u0430", "f": 11, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442 \u0434\u043b\u044f \u043e\u0441\u0430\u043d\u043a\u0438 \u0432\u0440\u0430\u0447", "f": 11, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442 \u0434\u043b\u044f \u043e\u0441\u0430\u043d\u043a\u0438 \u0436\u0435\u043d\u0441\u043a\u0438\u0439 \u0446\u0435\u043d\u0430", "f": 9, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442 \u0434\u043b\u044f \u043e\u0441\u0430\u043d\u043a\u0438 \u043e\u0442 \u0441\u0443\u0442\u0443\u043b\u043e\u0441\u0442\u0438 \u0436\u0435\u043d\u0441\u043a\u0438\u0439 \u0446\u0435\u043d\u044b", "f": 9, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442 \u0434\u043b\u044f \u043e\u0441\u0430\u043d\u043a\u0438 \u043e\u0442 \u0441\u0443\u0442\u0443\u043b\u043e\u0441\u0442\u0438 \u0446\u0435\u043d\u0430", "f": 9, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442 \u0434\u043b\u044f \u043e\u0441\u0430\u043d\u043a\u0438 \u0440\u0430\u0437\u043c\u0435\u0440\u044b", "f": 8, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442\u044b \u0434\u043b\u044f \u043c\u0443\u0436\u0447\u0438\u043d \u0434\u043b\u044f \u043e\u0441\u0430\u043d\u043a\u0438", "f": 8, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442 \u0434\u043b\u044f \u043a\u043e\u0440\u0440\u0435\u043a\u0446\u0438\u0438 \u043e\u0441\u0430\u043d\u043a\u0438", "f": 8, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442 \u0434\u043b\u044f \u043f\u043e\u0434\u0434\u0435\u0440\u0436\u0430\u043d\u0438\u044f \u043e\u0441\u0430\u043d\u043a\u0438", "f": 8, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043f\u043e\u0448\u0438\u0432 \u043a\u043e\u0440\u0441\u0435\u0442\u0430 \u043d\u0430 \u0437\u0430\u043a\u0430\u0437", "f": 7, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442 \u0434\u043b\u044f \u043e\u0441\u0430\u043d\u043a\u0438 \u043e\u0442 \u0441\u0443\u0442\u0443\u043b\u043e\u0441\u0442\u0438 \u043c\u0443\u0436\u0441\u043a\u043e\u0439", "f": 6, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043c\u0435\u0434\u0438\u0446\u0438\u043d\u0441\u043a\u0438\u0439 \u043a\u043e\u0440\u0441\u0435\u0442 \u0434\u043b\u044f \u043e\u0441\u0430\u043d\u043a\u0438", "f": 6, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u0441\u0448\u0438\u0442\u044c \u043a\u043e\u0440\u0441\u0435\u0442 \u0434\u043b\u044f \u043e\u0441\u0430\u043d\u043a\u0438", "f": 6, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442 \u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0439 \u043a\u043e\u0440\u0440\u0435\u043a\u0442\u043e\u0440 \u043e\u0441\u0430\u043d\u043a\u0438", "f": 5, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442 \u043d\u0430 \u0441\u043f\u0438\u043d\u0443 \u0434\u043b\u044f \u043e\u0441\u0430\u043d\u043a\u0438", "f": 5, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442 \u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0439 \u0434\u043b\u044f \u043e\u0441\u0430\u043d\u043a\u0438 \u043e\u0442 \u0441\u0443\u0442\u0443\u043b\u043e\u0441\u0442\u0438", "f": 5, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u0441\u043a\u043e\u043b\u044c\u043a\u043e \u0441\u0442\u043e\u0438\u0442 \u043a\u043e\u0440\u0441\u0435\u0442 \u043d\u0430 \u0437\u0430\u043a\u0430\u0437", "f": 4, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442 \u0434\u043b\u044f \u0432\u044b\u0440\u0430\u0432\u043d\u0438\u0432\u0430\u043d\u0438\u044f \u043e\u0441\u0430\u043d\u043a\u0438", "f": 4, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0440\u0435\u043a\u0446\u0438\u043e\u043d\u043d\u044b\u0439 \u043a\u043e\u0440\u0441\u0435\u0442 \u0434\u043b\u044f \u043e\u0441\u0430\u043d\u043a\u0438", "f": 4, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u0445\u043e\u0440\u043e\u0448\u0438\u0439 \u043a\u043e\u0440\u0441\u0435\u0442 \u0434\u043b\u044f \u0438\u0441\u043f\u0440\u0430\u0432\u043b\u0435\u043d\u0438\u044f \u043e\u0441\u0430\u043d\u043a\u0438", "f": 4, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442 \u0434\u043b\u044f \u0438\u0441\u043f\u0440\u0430\u0432\u043b\u0435\u043d\u0438\u044f \u043e\u0441\u0430\u043d\u043a\u0438 \u0436\u0435\u043d\u0441\u043a\u0438\u0439", "f": 4, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u0441\u0448\u0438\u0442\u044c \u043a\u043e\u0440\u0441\u0435\u0442 \u043d\u0430 \u0437\u0430\u043a\u0430\u0437", "f": 3, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442\u044b \u0434\u043b\u044f \u043f\u043e\u0437\u0432\u043e\u043d\u043e\u0447\u043d\u0438\u043a\u0430 \u043d\u0430 \u0437\u0430\u043a\u0430\u0437", "f": 3, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442 \u0434\u043b\u044f \u0441\u043f\u0438\u043d\u044b \u043d\u0430 \u0437\u0430\u043a\u0430\u0437", "f": 3, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442 \u043e\u0441\u0430\u043d\u043a\u0438 \u0436\u0435\u0441\u0442\u043a\u0438\u0439", "f": 3, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442 \u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0439 \u0434\u043b\u044f \u043e\u0441\u0430\u043d\u043a\u0438 \u0432\u0437\u0440\u043e\u0441\u043b\u044b\u0439", "f": 3, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0439 \u043a\u043e\u0440\u0441\u0435\u0442 \u0434\u043b\u044f \u043e\u0441\u0430\u043d\u043a\u0438 \u0436\u0435\u043d\u0441\u043a\u0438\u0439", "f": 3, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442 \u0434\u043b\u044f \u043f\u0440\u044f\u043c\u043e\u0439 \u043e\u0441\u0430\u043d\u043a\u0438", "f": 3, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442 \u0434\u043b\u044f \u043e\u0441\u0430\u043d\u043a\u0438 \u0434\u043b\u044f \u0436\u0435\u043d\u0449\u0438\u043d", "f": 3, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442\u044b \u0434\u043b\u044f \u043e\u0441\u0430\u043d\u043a\u0438 \u0436\u0435\u043d\u0441\u043a\u0438\u0435 \u043a\u0443\u043f\u0438\u0442\u044c", "f": 3, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442\u044b \u0434\u043b\u044f \u0441\u043f\u0438\u043d\u044b \u0434\u043b\u044f \u043e\u0441\u0430\u043d\u043a\u0438 \u0436\u0435\u043d\u0441\u043a\u0438\u0435", "f": 3, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u0430\u043a \u0432\u044b\u0431\u0440\u0430\u0442\u044c \u043a\u043e\u0440\u0441\u0435\u0442 \u0434\u043b\u044f \u043e\u0441\u0430\u043d\u043a\u0438 \u0432\u0437\u0440\u043e\u0441\u043b\u043e\u043c\u0443", "f": 3, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442 \u0434\u043b\u044f \u043e\u0441\u0430\u043d\u043a\u0438 \u043c\u0443\u0436\u0441\u043a\u043e\u0439 \u0432\u0437\u0440\u043e\u0441\u043b\u044b\u0439 \u043e\u0442 \u0441\u0443\u0442\u0443\u043b\u043e\u0441\u0442\u0438", "f": 3, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442\u044b \u0434\u043b\u044f \u043e\u0441\u0430\u043d\u043a\u0438 \u0432\u0437\u0440\u043e\u0441\u043b\u044b\u0439 \u043c\u0443\u0436\u0441\u043a\u043e\u0439", "f": 3, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u0441\u043a\u043e\u043b\u044c\u043a\u043e \u0441\u0442\u043e\u0438\u0442 \u0441\u0448\u0438\u0442\u044c \u043a\u043e\u0440\u0441\u0435\u0442 \u043d\u0430 \u0437\u0430\u043a\u0430\u0437", "f": 2, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442 \u043d\u0430 \u0437\u0430\u043a\u0430\u0437 \u0446\u0435\u043d\u0430", "f": 2, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442\u044b \u043d\u0430 \u0437\u0430\u043a\u0430\u0437 \u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0435", "f": 2, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u0438\u0437\u0433\u043e\u0442\u043e\u0432\u043b\u0435\u043d\u0438\u0435 \u043a\u043e\u0440\u0441\u0435\u0442\u043e\u0432 \u043d\u0430 \u0437\u0430\u043a\u0430\u0437", "f": 2, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442 \u043d\u0430 \u0437\u0430\u043a\u0430\u0437 \u0443\u0442\u044f\u0433\u0438\u0432\u0430\u044e\u0449\u0438\u0439", "f": 1, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u043a\u043e\u0440\u0441\u0435\u0442 \u0448\u0435\u043d\u043e \u043d\u0430 \u0437\u0430\u043a\u0430\u0437", "f": 1, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"},
+        
+        {"q": "\u0438\u0441\u043f\u0440\u0430\u0432\u0438\u0442\u044c \u043e\u0441\u0430\u043d\u043a\u0443 \u0432\u0437\u0440\u043e\u0441\u043b\u043e\u043c\u0443 \u043a\u043e\u0440\u0441\u0435\u0442\u043e\u043c", "f": 1, "u": "/uslugi/izgotovlenie-korseta-dlya-osanki"}
+        
+      ],
+      
+      
+      
+      "296": [
+        
+        {"q": "\u0438\u043d\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043b\u044c\u043d\u044b\u0435 \u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0435 \u0441\u0442\u0435\u043b\u044c\u043a\u0438", "f": 1764, "u": "/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek"},
+        
+        {"q": "\u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0435 \u0441\u0442\u0435\u043b\u044c\u043a\u0438 \u0438\u043d\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043b\u044c\u043d\u043e\u0435 \u0438\u0437\u0433\u043e\u0442\u043e\u0432\u043b\u0435\u043d\u0438\u0435", "f": 555, "u": "/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek"},
+        
+        {"q": "\u0438\u043d\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043b\u044c\u043d\u044b\u0435 \u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0435 \u0441\u0442\u0435\u043b\u044c\u043a\u0438 \u0432 \u0441\u043f\u0431", "f": 545, "u": "/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek"},
+        
+        {"q": "\u0441\u0442\u0435\u043b\u044c\u043a\u0438 \u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0435 \u0438\u043d\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043b\u044c\u043d\u044b\u0435 \u0437\u0430\u043a\u0430\u0437\u0430\u0442\u044c", "f": 420, "u": "/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek"},
+        
+        {"q": "\u0441\u0442\u0435\u043b\u044c\u043a\u0438 \u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0435 \u0438\u043d\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043b\u044c\u043d\u044b\u0435 \u0437\u0430\u043a\u0430\u0437\u0430\u0442\u044c \u0441\u043f\u0431", "f": 327, "u": "/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek"},
+        
+        {"q": "\u0438\u043d\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043b\u044c\u043d\u044b\u0435 \u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0435 \u0441\u0442\u0435\u043b\u044c\u043a\u0438 \u043d\u0430 \u0437\u0430\u043a\u0430\u0437", "f": 247, "u": "/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek"},
+        
+        {"q": "\u0438\u0437\u0433\u043e\u0442\u043e\u0432\u043b\u0435\u043d\u0438\u0435 \u0438\u043d\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043b\u044c\u043d\u044b\u0445 \u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0445 \u0441\u0442\u0435\u043b\u0435\u043a \u0432 \u0441\u043f\u0431", "f": 215, "u": "/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek"},
+        
+        {"q": "\u0438\u043d\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043b\u044c\u043d\u044b\u0435 \u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0435 \u0441\u0442\u0435\u043b\u044c\u043a\u0438 \u0446\u0435\u043d\u0430", "f": 209, "u": "/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek"},
+        
+        {"q": "\u0438\u043d\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043b\u044c\u043d\u044b\u0435 \u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0435 \u0441\u0442\u0435\u043b\u044c\u043a\u0438 \u043d\u0430 \u0437\u0430\u043a\u0430\u0437 \u0432 \u0441\u043f\u0431", "f": 174, "u": "/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek"},
+        
+        {"q": "\u0438\u043d\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043b\u044c\u043d\u044b\u0435 \u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0435 \u0441\u0442\u0435\u043b\u044c\u043a\u0438 \u0441\u0430\u043d\u043a\u0442 \u043f\u0435\u0442\u0435\u0440\u0431\u0443\u0440\u0433", "f": 164, "u": "/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek"},
+        
+        {"q": "\u0441\u0442\u0435\u043b\u044c\u043a\u0438 \u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0435 \u0438\u043d\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043b\u044c\u043d\u044b\u0435 \u043f\u0435\u0442\u0435\u0440\u0431\u0443\u0440\u0433", "f": 164, "u": "/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek"},
+        
+        {"q": "\u0438\u043d\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043b\u044c\u043d\u044b\u0435 \u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0435 \u0441\u0442\u0435\u043b\u044c\u043a\u0438 \u0446\u0435\u043d\u0430 \u0441\u043f\u0431", "f": 162, "u": "/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek"},
+        
+        {"q": "\u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0435 \u0441\u0442\u0435\u043b\u044c\u043a\u0438 \u0438\u043d\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043b\u044c\u043d\u043e\u0435 \u0438\u0437\u0433\u043e\u0442\u043e\u0432\u043b\u0435\u043d\u0438\u0435 \u0432 \u0441\u0430\u043d\u043a\u0442 \u043f\u0435\u0442\u0435\u0440\u0431\u0443\u0440\u0433\u0435", "f": 126, "u": "/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek"},
+        
+        {"q": "\u0438\u043d\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043b\u044c\u043d\u044b\u0435 \u0441\u0442\u0435\u043b\u044c\u043a\u0438 \u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0435 \u0438\u0437\u0433\u043e\u0442\u043e\u0432\u043b\u0435\u043d\u0438\u0435 \u0446\u0435\u043d\u0430", "f": 97, "u": "/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek"},
+        
+        {"q": "\u0438\u043d\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043b\u044c\u043d\u044b\u0435 \u0441\u0442\u0435\u043b\u044c\u043a\u0438 \u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0435 \u0438\u0437\u0433\u043e\u0442\u043e\u0432\u043b\u0435\u043d\u0438\u0435 \u0446\u0435\u043d\u0430 \u0432 \u0441\u043f\u0431", "f": 74, "u": "/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek"},
+        
+        {"q": "\u0433\u0434\u0435 \u0437\u0430\u043a\u0430\u0437\u0430\u0442\u044c \u0438\u043d\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043b\u044c\u043d\u044b\u0435 \u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0435 \u0441\u0442\u0435\u043b\u044c\u043a\u0438", "f": 68, "u": "/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek"},
+        
+        {"q": "\u0438\u043d\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043b\u044c\u043d\u044b\u0435 \u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0435 \u0441\u0442\u0435\u043b\u044c\u043a\u0438 \u043d\u0430 \u0437\u0430\u043a\u0430\u0437 \u0446\u0435\u043d\u0430", "f": 63, "u": "/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek"},
+        
+        {"q": "\u0438\u043d\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043b\u044c\u043d\u0430\u044f \u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0430\u044f \u0441\u0442\u0435\u043b\u044c\u043a\u0430 \u0437\u0430\u043a\u0430\u0437\u0430\u0442\u044c \u0446\u0435\u043d\u0430", "f": 48, "u": "/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek"},
+        
+        {"q": "\u0433\u0434\u0435 \u0437\u0430\u043a\u0430\u0437\u0430\u0442\u044c \u0441\u0442\u0435\u043b\u044c\u043a\u0438 \u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0435 \u0438\u043d\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043b\u044c\u043d\u044b\u0435 \u0441\u043f\u0431", "f": 47, "u": "/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek"},
+        
+        {"q": "\u0438\u043d\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043b\u044c\u043d\u044b\u0435 \u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0435 \u0441\u0442\u0435\u043b\u044c\u043a\u0438 \u043e\u0442\u0437\u044b\u0432\u044b", "f": 45, "u": "/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek"},
+        
+        {"q": "\u0441\u0442\u0435\u043b\u044c\u043a\u0438 \u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0435 \u0438\u043d\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043b\u044c\u043d\u044b\u0435 \u0437\u0430\u043a\u0430\u0437\u0430\u0442\u044c \u0441\u043f\u0431 \u0446\u0435\u043d\u0430", "f": 45, "u": "/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek"},
+        
+        {"q": "\u0438\u043d\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043b\u044c\u043d\u044b\u0435 \u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0435 \u0441\u0442\u0435\u043b\u044c\u043a\u0438 \u043f\u0440\u0438 \u043f\u043b\u043e\u0441\u043a\u043e\u0441\u0442\u043e\u043f\u0438\u0438", "f": 30, "u": "/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek"},
+        
+        {"q": "\u0441\u0434\u0435\u043b\u0430\u0442\u044c \u0438\u043d\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043b\u044c\u043d\u044b\u0435 \u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0435 \u0441\u0442\u0435\u043b\u044c\u043a\u0438", "f": 27, "u": "/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek"},
+        
+        {"q": "\u0438\u043d\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043b\u044c\u043d\u044b\u0435 \u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0435 \u0441\u0442\u0435\u043b\u044c\u043a\u0438 \u043a\u0443\u043f\u0438\u0442\u044c", "f": 26, "u": "/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek"},
+        
+        {"q": "\u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0439 \u0441\u0430\u043b\u043e\u043d \u0441\u0442\u0435\u043b\u044c\u043a\u0438 \u0438\u043d\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043b\u044c\u043d\u043e\u0435", "f": 24, "u": "/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek"},
+        
+        {"q": "\u0441\u0442\u0435\u043b\u044c\u043a\u0438 \u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0435 \u0438\u043d\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043b\u044c\u043d\u044b\u0435 \u0445\u043e\u0440\u043e\u0448\u0438\u0435", "f": 22, "u": "/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek"},
+        
+        {"q": "\u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0435 \u0438\u043d\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043b\u044c\u043d\u044b\u0435 \u0441\u0442\u0435\u043b\u044c\u043a\u0438 \u043a\u0443\u043f\u0438\u0442\u044c \u0441\u043f\u0431", "f": 20, "u": "/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek"},
+        
+        {"q": "\u0438\u043d\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043b\u044c\u043d\u044b\u0435 \u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0435 \u0441\u0442\u0435\u043b\u044c\u043a\u0438 \u0441\u043f\u0431 \u043e\u0442\u0437\u044b\u0432\u044b", "f": 19, "u": "/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek"},
+        
+        {"q": "\u0433\u0434\u0435 \u043c\u043e\u0436\u043d\u043e \u0437\u0430\u043a\u0430\u0437\u0430\u0442\u044c \u0438\u043d\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043b\u044c\u043d\u044b\u0435 \u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0435 \u0441\u0442\u0435\u043b\u044c\u043a\u0438", "f": 19, "u": "/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek"},
+        
+        {"q": "\u0438\u0437\u0433\u043e\u0442\u043e\u0432\u0438\u0442\u044c \u0438\u043d\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043b\u044c\u043d\u044b\u0435 \u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0435 \u0441\u0442\u0435\u043b\u044c\u043a\u0438", "f": 17, "u": "/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek"},
+        
+        {"q": "\u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0435 \u0441\u0442\u0435\u043b\u044c\u043a\u0438 \u0438\u0437\u0433\u043e\u0442\u0430\u0432\u043b\u0438\u0432\u0430\u0435\u043c\u044b\u0435 \u0438\u043d\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043b\u044c\u043d\u043e", "f": 17, "u": "/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek"},
+        
+        {"q": "\u0437\u0430\u043a\u0430\u0437\u0430\u0442\u044c \u0441\u0442\u0435\u043b\u044c\u043a\u0438 \u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0435 \u0438\u043d\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043b\u044c\u043d\u044b\u0435 \u0432 \u0441\u0430\u043d\u043a\u0442 \u043f\u0435\u0442\u0435\u0440\u0431\u0443\u0440\u0433\u0435", "f": 17, "u": "/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek"},
+        
+        {"q": "\u0441\u043a\u043e\u043b\u044c\u043a\u043e \u0441\u0442\u043e\u044f\u0442 \u0438\u043d\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043b\u044c\u043d\u044b\u0435 \u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0435 \u0441\u0442\u0435\u043b\u044c\u043a\u0438", "f": 17, "u": "/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek"},
+        
+        {"q": "\u043d\u0435\u0434\u043e\u0440\u043e\u0433\u0438\u0435 \u0438\u043d\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043b\u044c\u043d\u044b\u0435 \u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0435 \u0441\u0442\u0435\u043b\u044c\u043a\u0438", "f": 12, "u": "/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek"},
+        
+        {"q": "\u0441\u0434\u0435\u043b\u0430\u0442\u044c \u0438\u043d\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043b\u044c\u043d\u044b\u0435 \u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0435 \u0441\u0442\u0435\u043b\u044c\u043a\u0438 \u0432 \u0441\u043f\u0431", "f": 11, "u": "/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek"},
+        
+        {"q": "\u0430\u0434\u0440\u0435\u0441\u0430 \u0438\u0437\u0433\u043e\u0442\u043e\u0432\u043b\u0435\u043d\u0438\u044f \u0438\u043d\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043b\u044c\u043d\u044b\u0445 \u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0445 \u0441\u0442\u0435\u043b\u0435\u043a", "f": 11, "u": "/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek"},
+        
+        {"q": "\u0441\u0442\u043e\u0438\u043c\u043e\u0441\u0442\u044c \u0438\u043d\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043b\u044c\u043d\u044b\u0445 \u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0445 \u0441\u0442\u0435\u043b\u0435\u043a", "f": 10, "u": "/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek"},
+        
+        {"q": "\u0437\u0430\u043a\u0430\u0437\u0430\u0442\u044c \u0438\u043d\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043b\u044c\u043d\u044b\u0435 \u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0435 \u0441\u0442\u0435\u043b\u044c\u043a\u0438 \u043d\u0435\u0434\u043e\u0440\u043e\u0433\u043e", "f": 9, "u": "/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek"},
+        
+        {"q": "\u0438\u043d\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043b\u044c\u043d\u0430\u044f \u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0430\u044f \u0441\u0442\u0435\u043b\u044c\u043a\u0430 \u0441\u043f\u043e\u0440\u0442\u0438\u0432\u043d\u0430\u044f", "f": 9, "u": "/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek"},
+        
+        {"q": "\u0438\u043d\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043b\u044c\u043d\u044b\u0435 \u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0435 \u0441\u0442\u0435\u043b\u044c\u043a\u0438 \u0441\u043f\u0431 \u043d\u0435\u0434\u043e\u0440\u043e\u0433\u043e", "f": 7, "u": "/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek"}
+        
+      ],
+      
+      
+      
+      "297": [
+        
+        {"q": "\u043e\u0440\u0442\u0435\u0437 \u043d\u0430 \u043d\u043e\u0433\u0443", "f": 348, "u": "/uslugi/izgotovlenie-orteza-na-nogu"},
+        
+        {"q": "\u043e\u0440\u0442\u0435\u0437 \u043d\u0430 \u043f\u0430\u043b\u0435\u0446 \u043d\u043e\u0433\u0438", "f": 142, "u": "/uslugi/izgotovlenie-orteza-na-nogu"},
+        
+        {"q": "\u043e\u0440\u0442\u0435\u0437 \u043d\u0430 \u043c\u0438\u0437\u0438\u043d\u0435\u0446 \u043d\u043e\u0433\u0438", "f": 37, "u": "/uslugi/izgotovlenie-orteza-na-nogu"},
+        
+        {"q": "\u043e\u0440\u0442\u0435\u0437 \u043d\u0430 \u043f\u0430\u043b\u0435\u0446 \u043d\u0430 \u043d\u043e\u0433\u0435 \u043d\u0430 \u0432\u0430\u043b\u0431\u0435\u0440\u0438\u0441", "f": 32, "u": "/uslugi/izgotovlenie-orteza-na-nogu"},
+        
+        {"q": "\u043e\u0440\u0442\u0435\u0437 \u043d\u0430 \u043d\u043e\u0433\u0443 \u043f\u0440\u0438 \u043f\u0435\u0440\u0435\u043b\u043e\u043c\u0435", "f": 31, "u": "/uslugi/izgotovlenie-orteza-na-nogu"},
+        
+        {"q": "\u043e\u0440\u0442\u0435\u0437 \u043d\u0430 \u0431\u043e\u043b\u044c\u0448\u043e\u0439 \u043f\u0430\u043b\u0435\u0446 \u043d\u043e\u0433\u0438", "f": 25, "u": "/uslugi/izgotovlenie-orteza-na-nogu"},
+        
+        {"q": "\u043e\u0440\u0442\u0435\u0437 \u043f\u0440\u0438 \u043f\u0435\u0440\u0435\u043b\u043e\u043c\u0435 \u043f\u0430\u043b\u044c\u0446\u0430 \u043d\u0430 \u043d\u043e\u0433\u0435", "f": 16, "u": "/uslugi/izgotovlenie-orteza-na-nogu"},
+        
+        {"q": "\u043e\u0440\u0442\u0435\u0437 \u043d\u0430 \u043f\u0440\u0430\u0432\u0443\u044e \u043d\u043e\u0433\u0443", "f": 12, "u": "/uslugi/izgotovlenie-orteza-na-nogu"},
+        
+        {"q": "\u043a\u0443\u043f\u0438\u0442\u044c \u043e\u0440\u0442\u0435\u0437 \u043d\u0430 \u043d\u043e\u0433\u0443", "f": 11, "u": "/uslugi/izgotovlenie-orteza-na-nogu"},
+        
+        {"q": "\u043e\u0440\u0442\u0435\u0437 \u043d\u0430 \u043d\u043e\u0433\u0443 \u043d\u0430 \u0433\u043e\u043b\u0435\u043d\u043e\u0441\u0442\u043e\u043f", "f": 9, "u": "/uslugi/izgotovlenie-orteza-na-nogu"},
+        
+        {"q": "\u043e\u0440\u0442\u0435\u0437 \u043d\u0430 \u043a\u043e\u0441\u0442\u043e\u0447\u043a\u0443 \u043d\u0430 \u043d\u043e\u0433\u0435", "f": 9, "u": "/uslugi/izgotovlenie-orteza-na-nogu"},
+        
+        {"q": "\u043e\u0440\u0442\u0435\u0437 \u043d\u0430 \u043d\u043e\u0433\u0443 \u043d\u0430 \u0433\u043e\u043b\u0435\u043d\u043e\u0441\u0442\u043e\u043f\u043d\u044b\u0439", "f": 9, "u": "/uslugi/izgotovlenie-orteza-na-nogu"},
+        
+        {"q": "\u0436\u0435\u0441\u0442\u043a\u0438\u0439 \u043e\u0440\u0442\u0435\u0437 \u043d\u0430 \u043d\u043e\u0433\u0443", "f": 8, "u": "/uslugi/izgotovlenie-orteza-na-nogu"},
+        
+        {"q": "\u043e\u0440\u0442\u0435\u0437 \u0433\u0438\u043f\u0441 \u043d\u0430 \u043d\u043e\u0433\u0443", "f": 7, "u": "/uslugi/izgotovlenie-orteza-na-nogu"},
+        
+        {"q": "\u043e\u0440\u0442\u0435\u0437 \u043d\u0430 \u0432\u0441\u044e \u043d\u043e\u0433\u0443 \u0436\u0435\u0441\u0442\u043a\u043e\u0439 \u0444\u0438\u043a\u0441\u0430\u0446\u0438\u0438", "f": 7, "u": "/uslugi/izgotovlenie-orteza-na-nogu"},
+        
+        {"q": "\u043e\u0440\u0442\u0435\u0437 \u043d\u0430 \u0441\u043b\u043e\u043c\u0430\u043d\u043d\u0443\u044e \u043d\u043e\u0433\u0443", "f": 7, "u": "/uslugi/izgotovlenie-orteza-na-nogu"},
+        
+        {"q": "\u043e\u0440\u0442\u0435\u0437 \u043d\u0430 \u043f\u0430\u043b\u044c\u0446\u044b \u043d\u043e\u0433 \u043c\u0438\u0437\u0438\u043d\u0446\u0430", "f": 7, "u": "/uslugi/izgotovlenie-orteza-na-nogu"},
+        
+        {"q": "\u043e\u0440\u0442\u0435\u0437\u044b \u043d\u0430 \u043d\u043e\u0433\u0443 \u0432\u043c\u0435\u0441\u0442\u043e \u0433\u0438\u043f\u0441\u0430", "f": 6, "u": "/uslugi/izgotovlenie-orteza-na-nogu"},
+        
+        {"q": "\u043e\u0440\u0442\u0435\u0437 \u043d\u0430 \u0441\u043b\u043e\u043c\u0430\u043d\u043d\u044b\u0439 \u043f\u0430\u043b\u0435\u0446 \u043d\u043e\u0433\u0438", "f": 6, "u": "/uslugi/izgotovlenie-orteza-na-nogu"},
+        
+        {"q": "\u043a\u0443\u043f\u0438\u0442\u044c \u043e\u0440\u0442\u0435\u0437\u044b \u043d\u0430 \u043f\u0430\u043b\u044c\u0446\u044b \u043d\u043e\u0433", "f": 5, "u": "/uslugi/izgotovlenie-orteza-na-nogu"},
+        
+        {"q": "\u0433\u043e\u043b\u0435\u043d\u043e\u0441\u0442\u043e\u043f\u043d\u044b\u0439 \u043e\u0440\u0442\u0435\u0437 \u043d\u0430 \u043b\u0435\u0432\u0443\u044e \u043d\u043e\u0433\u0443", "f": 4, "u": "/uslugi/izgotovlenie-orteza-na-nogu"},
+        
+        {"q": "\u043e\u0440\u0442\u0435\u0437 \u043d\u0430 \u043d\u043e\u0433\u0443 \u043a\u043e\u043b\u0435\u043d\u043e", "f": 4, "u": "/uslugi/izgotovlenie-orteza-na-nogu"},
+        
+        {"q": "\u043e\u0440\u0442\u0435\u0437 \u043d\u0430 \u043d\u043e\u0433\u0443 \u0441\u0442\u043e\u043f\u0430", "f": 3, "u": "/uslugi/izgotovlenie-orteza-na-nogu"},
+        
+        {"q": "\u043e\u0440\u0442\u0435\u0437 \u043d\u0430 \u043d\u043e\u0433\u0443 \u0446\u0435\u043d\u0430", "f": 3, "u": "/uslugi/izgotovlenie-orteza-na-nogu"},
+        
+        {"q": "\u043e\u0440\u0442\u0435\u0437 \u043d\u0430 \u0441\u0440\u0435\u0434\u043d\u0438\u0439 \u043f\u0430\u043b\u0435\u0446 \u043d\u043e\u0433\u0438", "f": 3, "u": "/uslugi/izgotovlenie-orteza-na-nogu"},
+        
+        {"q": "\u043e\u0440\u0442\u0435\u0437 \u043d\u0430 \u043f\u0430\u043b\u044c\u0446\u044b \u043d\u043e\u0433 \u043f\u0440\u0438 \u0434\u0435\u0444\u043e\u0440\u043c\u0430\u0446\u0438\u0438", "f": 2, "u": "/uslugi/izgotovlenie-orteza-na-nogu"},
+        
+        {"q": "\u043e\u0440\u0442\u0435\u0437 \u043d\u0430 \u043d\u043e\u0433\u0443 \u0440\u0435\u0431\u0435\u043d\u043a\u0443", "f": 2, "u": "/uslugi/izgotovlenie-orteza-na-nogu"},
+        
+        {"q": "\u043e\u0440\u0442\u0435\u0437 \u043d\u0430 \u043d\u043e\u0433\u0443 \u0438\u043d\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043b\u044c\u043d\u044b\u0439", "f": 2, "u": "/uslugi/izgotovlenie-orteza-na-nogu"},
+        
+        {"q": "\u043e\u0440\u0442\u0435\u0437 \u043f\u0440\u0438 \u043f\u0435\u0440\u0435\u043b\u043e\u043c\u0435 \u0441\u0442\u043e\u043f\u044b \u043d\u0430 \u043d\u043e\u0433\u0443", "f": 2, "u": "/uslugi/izgotovlenie-orteza-na-nogu"},
+        
+        {"q": "\u043e\u0440\u0442\u0435\u0437 \u043d\u0430 \u0441\u0442\u043e\u043f\u0443 \u043f\u0440\u0438 \u043f\u0435\u0440\u0435\u043b\u043e\u043c\u0435 \u043f\u0430\u043b\u044c\u0446\u0430 \u043d\u043e\u0433\u0438", "f": 2, "u": "/uslugi/izgotovlenie-orteza-na-nogu"},
+        
+        {"q": "\u043e\u0440\u0442\u0435\u0437 \u043d\u0430 2 \u043f\u0430\u043b\u0435\u0446 \u043d\u043e\u0433\u0438", "f": 2, "u": "/uslugi/izgotovlenie-orteza-na-nogu"},
+        
+        {"q": "\u043e\u0440\u0442\u0435\u0437 \u043d\u0430 \u043d\u043e\u0433\u0443 \u043f\u043e\u0441\u043b\u0435 \u043f\u0435\u0440\u0435\u043b\u043e\u043c\u0430", "f": 2, "u": "/uslugi/izgotovlenie-orteza-na-nogu"},
+        
+        {"q": "\u0441\u0442\u043e\u0438\u043c\u043e\u0441\u0442\u044c \u043e\u0440\u0442\u0435\u0437\u0430 \u043d\u0430 \u043d\u043e\u0433\u0443", "f": 1, "u": "/uslugi/izgotovlenie-orteza-na-nogu"},
+        
+        {"q": "\u043e\u0440\u0442\u0435\u0437 \u043d\u0430 \u043c\u0438\u0437\u0438\u043d\u0435\u0446 \u043d\u043e\u0433\u0438 \u043a\u0443\u043f\u0438\u0442\u044c", "f": 1, "u": "/uslugi/izgotovlenie-orteza-na-nogu"},
+        
+        {"q": "\u043e\u0440\u0442\u0435\u0437 \u043d\u0430 \u0431\u043e\u043b\u044c\u0448\u043e\u0439 \u043f\u0430\u043b\u0435\u0446 \u043f\u0440\u0430\u0432\u043e\u0439 \u043d\u043e\u0433\u0438", "f": 1, "u": "/uslugi/izgotovlenie-orteza-na-nogu"},
+        
+        {"q": "\u043e\u0440\u0442\u0435\u0437 \u043d\u0430 \u0431\u0435\u0440\u0446\u043e\u0432\u0443\u044e \u043a\u043e\u0441\u0442\u044c \u043f\u0440\u0438 \u043f\u0435\u0440\u0435\u043b\u043e\u043c\u0435 \u043d\u043e\u0433\u0438", "f": 1, "u": "/uslugi/izgotovlenie-orteza-na-nogu"},
+        
+        {"q": "\u043e\u0440\u0442\u0435\u0437 \u043d\u0430 \u043f\u0430\u043b\u0435\u0446 \u043d\u043e\u0433\u0438 \u043f\u0440\u0438 \u043a\u043e\u0441\u0442\u043e\u0447\u043a\u0435 \u0431\u043e\u043b\u044c\u0448\u043e\u0439", "f": 1, "u": "/uslugi/izgotovlenie-orteza-na-nogu"},
+        
+        {"q": "\u043e\u0440\u0442\u0435\u0437 \u043d\u0430 \u0432\u0441\u044e \u043d\u043e\u0433\u0443 \u0432\u0437\u0440\u043e\u0441\u043b\u044b\u0439", "f": 1, "u": "/uslugi/izgotovlenie-orteza-na-nogu"},
+        
+        {"q": "\u043a\u0443\u043f\u0438\u0442\u044c \u043e\u0440\u0442\u0435\u0437 \u043d\u0430 \u043b\u0435\u0432\u0443\u044e \u043d\u043e\u0433\u0443", "f": 1, "u": "/uslugi/izgotovlenie-orteza-na-nogu"}
+        
+      ],
+      
+      
+      
+      "298": [
+        
+        {"q": "\u0430\u043f\u043f\u0430\u0440\u0430\u0442 \u043d\u0430 \u0432\u0441\u044e \u043d\u043e\u0433\u0443", "f": 47, "u": "/uslugi/izgotovlenie-ortopedicheskogo-apparata-na-nogu"},
+        
+        {"q": "\u0430\u043f\u043f\u0430\u0440\u0430\u0442 \u043d\u0430 \u043f\u0435\u0440\u0435\u043b\u043e\u043c \u043d\u043e\u0433\u0438", "f": 16, "u": "/uslugi/izgotovlenie-ortopedicheskogo-apparata-na-nogu"},
+        
+        {"q": "\u0430\u043f\u043f\u0430\u0440\u0430\u0442 \u043d\u0430 \u043d\u043e\u0433\u0438 \u0434\u0446\u043f", "f": 5, "u": "/uslugi/izgotovlenie-ortopedicheskogo-apparata-na-nogu"},
+        
+        {"q": "\u0430\u043f\u043f\u0430\u0440\u0430\u0442\u044b \u043d\u0430 \u043d\u043e\u0433\u0438 \u0434\u043b\u044f \u0434\u0435\u0442\u0435\u0439", "f": 4, "u": "/uslugi/izgotovlenie-ortopedicheskogo-apparata-na-nogu"},
+        
+        {"q": "\u0430\u043f\u043f\u0430\u0440\u0430\u0442 \u043d\u0430 \u0432\u0441\u044e \u043d\u043e\u0433\u0443 \u0434\u043b\u044f \u0434\u0435\u0442\u0435\u0439", "f": 3, "u": "/uslugi/izgotovlenie-ortopedicheskogo-apparata-na-nogu"},
+        
+        {"q": "\u0430\u043f\u043f\u0430\u0440\u0430\u0442 \u043d\u0430 \u043d\u043e\u0433\u0443 \u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0439", "f": 2, "u": "/uslugi/izgotovlenie-ortopedicheskogo-apparata-na-nogu"},
+        
+        {"q": "\u0430\u043f\u043f\u0430\u0440\u0430\u0442 \u043d\u0430 \u043d\u043e\u0433\u0443 \u0434\u043b\u044f \u0440\u0435\u0430\u0431\u0438\u043b\u0438\u0442\u0430\u0446\u0438\u0438", "f": 2, "u": "/uslugi/izgotovlenie-ortopedicheskogo-apparata-na-nogu"},
+        
+        {"q": "\u0430\u043f\u043f\u0430\u0440\u0430\u0442 \u043d\u0430 \u0441\u043b\u043e\u043c\u0430\u043d\u043d\u0443\u044e \u043d\u043e\u0433\u0443", "f": 2, "u": "/uslugi/izgotovlenie-ortopedicheskogo-apparata-na-nogu"},
+        
+        {"q": "\u0430\u043f\u043f\u0430\u0440\u0430\u0442\u044b \u043d\u0430 \u0432\u0441\u044e \u043d\u043e\u0433\u0443 \u043a\u0443\u043f\u0438\u0442\u044c", "f": 1, "u": "/uslugi/izgotovlenie-ortopedicheskogo-apparata-na-nogu"},
+        
+        {"q": "\u0430\u043f\u043f\u0430\u0440\u0430\u0442 \u043d\u0430 \u0432\u0441\u044e \u043d\u043e\u0433\u0443 \u0434\u043b\u044f \u0438\u043d\u0432\u0430\u043b\u0438\u0434\u043e\u0432", "f": 1, "u": "/uslugi/izgotovlenie-ortopedicheskogo-apparata-na-nogu"},
+        
+        {"q": "\u0430\u043f\u043f\u0430\u0440\u0430\u0442 \u043d\u0430 \u0432\u0441\u044e \u043d\u043e\u0433\u0443 \u0434\u0446\u043f", "f": 1, "u": "/uslugi/izgotovlenie-ortopedicheskogo-apparata-na-nogu"},
+        
+        {"q": "\u0430\u043f\u043f\u0430\u0440\u0430\u0442 \u043d\u0430 \u0432\u0441\u044e \u043d\u043e\u0433\u0443 \u0444\u043e\u0442\u043e", "f": 1, "u": "/uslugi/izgotovlenie-ortopedicheskogo-apparata-na-nogu"},
+        
+        {"q": "\u0430\u043f\u043f\u0430\u0440\u0430\u0442 \u043d\u0430 \u043d\u043e\u0433\u0438 \u0438 \u0442\u0443\u043b\u043e\u0432\u0438\u0449\u0435", "f": 1, "u": "/uslugi/izgotovlenie-ortopedicheskogo-apparata-na-nogu"},
+        
+        {"q": "\u0430\u043f\u043f\u0430\u0440\u0430\u0442 \u043d\u0430 \u043d\u043e\u0433\u0443 \u043f\u043e\u0441\u043b\u0435 \u043e\u043f\u0435\u0440\u0430\u0446\u0438\u0438", "f": 1, "u": "/uslugi/izgotovlenie-ortopedicheskogo-apparata-na-nogu"},
+        
+        {"q": "\u0430\u043f\u043f\u0430\u0440\u0430\u0442\u044b \u043d\u0430 \u043d\u043e\u0433\u0438 \u0434\u043b\u044f \u0434\u0435\u0442\u0435\u0439 \u0441 \u0434\u0446\u043f", "f": 1, "u": "/uslugi/izgotovlenie-ortopedicheskogo-apparata-na-nogu"}
+        
+      ],
+      
+      
+      
+      "299": [
+        
+        {"q": "\u0430\u043f\u043f\u0430\u0440\u0430\u0442 \u043d\u0430 \u043a\u043e\u043b\u0435\u043d\u043d\u044b\u0439 \u0441\u0443\u0441\u0442\u0430\u0432", "f": 118, "u": "/uslugi/izgotovlenie-apparata-na-kolennyj-sustav"},
+        
+        {"q": "\u0430\u043f\u043f\u0430\u0440\u0430\u0442 \u043d\u0430 \u043a\u043e\u043b\u0435\u043d\u043e", "f": 31, "u": "/uslugi/izgotovlenie-apparata-na-kolennyj-sustav"},
+        
+        {"q": "\u0430\u043f\u043f\u0430\u0440\u0430\u0442 \u043d\u0430 \u043a\u043e\u043b\u0435\u043d\u043d\u044b\u0439 \u0441\u0443\u0441\u0442\u0430\u0432 \u043a\u0443\u043f\u0438\u0442\u044c", "f": 15, "u": "/uslugi/izgotovlenie-apparata-na-kolennyj-sustav"},
+        
+        {"q": "\u0430\u043f\u043f\u0430\u0440\u0430\u0442 \u043d\u0430 \u0433\u043e\u043b\u0435\u043d\u043e\u0441\u0442\u043e\u043f\u043d\u044b\u0439 \u0438 \u043a\u043e\u043b\u0435\u043d\u043d\u044b\u0439 \u0441\u0443\u0441\u0442\u0430\u0432", "f": 12, "u": "/uslugi/izgotovlenie-apparata-na-kolennyj-sustav"},
+        
+        {"q": "\u0430\u043f\u043f\u0430\u0440\u0430\u0442 \u043d\u0430 \u043a\u043e\u043b\u0435\u043d\u043d\u044b\u0439 \u0441\u0443\u0441\u0442\u0430\u0432 \u043f\u043e \u0441\u0435\u0440\u0442\u0438\u0444\u0438\u043a\u0430\u0442\u0443", "f": 10, "u": "/uslugi/izgotovlenie-apparata-na-kolennyj-sustav"},
+        
+        {"q": "\u0430\u043f\u043f\u0430\u0440\u0430\u0442 \u043d\u0430 \u043a\u043e\u043b\u0435\u043d\u043d\u044b\u0439 \u0438 \u0442\u0430\u0437\u043e\u0431\u0435\u0434\u0440\u0435\u043d\u043d\u044b\u0439 \u0441\u0443\u0441\u0442\u0430\u0432", "f": 3, "u": "/uslugi/izgotovlenie-apparata-na-kolennyj-sustav"},
+        
+        {"q": "\u0430\u043f\u043f\u0430\u0440\u0430\u0442 \u043d\u0430 \u043a\u043e\u043b\u0435\u043d\u043d\u044b\u0439 \u0441\u0443\u0441\u0442\u0430\u0432 \u0444\u043e\u0442\u043e", "f": 2, "u": "/uslugi/izgotovlenie-apparata-na-kolennyj-sustav"},
+        
+        {"q": "\u0430\u043f\u043f\u0430\u0440\u0430\u0442 \u043d\u0430 \u043a\u043e\u043b\u0435\u043d\u043d\u044b\u0439 \u0441\u0443\u0441\u0442\u0430\u0432 \u0446\u0435\u043d\u0430", "f": 1, "u": "/uslugi/izgotovlenie-apparata-na-kolennyj-sustav"},
+        
+        {"q": "\u0430\u043f\u043f\u0430\u0440\u0430\u0442 \u043d\u0430 \u043a\u043e\u043b\u0435\u043d\u043d\u044b\u0439 \u0441\u0443\u0441\u0442\u0430\u0432 \u0434\u043b\u044f \u0434\u0435\u0442\u0435\u0439", "f": 1, "u": "/uslugi/izgotovlenie-apparata-na-kolennyj-sustav"}
+        
+      ],
+      
+      
+      
+      "300": [
+        
+        {"q": "\u0430\u043f\u043f\u0430\u0440\u0430\u0442 \u043d\u0430 \u0433\u043e\u043b\u0435\u043d\u043e\u0441\u0442\u043e\u043f\u043d\u044b\u0439", "f": 107, "u": "/uslugi/izgotovlenie-apparata-na-golenostopnyj-sustav"},
+        
+        {"q": "\u0430\u043f\u043f\u0430\u0440\u0430\u0442 \u043d\u0430 \u0433\u043e\u043b\u0435\u043d\u043e\u0441\u0442\u043e\u043f\u043d\u044b\u0439 \u0441\u0443\u0441\u0442\u0430\u0432", "f": 105, "u": "/uslugi/izgotovlenie-apparata-na-golenostopnyj-sustav"},
+        
+        {"q": "\u0430\u043f\u043f\u0430\u0440\u0430\u0442 \u043d\u0430 \u0433\u043e\u043b\u0435\u043d\u043e\u0441\u0442\u043e\u043f", "f": 29, "u": "/uslugi/izgotovlenie-apparata-na-golenostopnyj-sustav"},
+        
+        {"q": "\u0430\u043f\u043f\u0430\u0440\u0430\u0442 \u043d\u0430 \u0433\u043e\u043b\u0435\u043d\u043e\u0441\u0442\u043e\u043f\u043d\u044b\u0439 \u0441\u0443\u0441\u0442\u0430\u0432 \u0434\u043b\u044f \u0434\u0435\u0442\u0435\u0439", "f": 17, "u": "/uslugi/izgotovlenie-apparata-na-golenostopnyj-sustav"},
+        
+        {"q": "\u0430\u043f\u043f\u0430\u0440\u0430\u0442 \u043d\u0430 \u0433\u043e\u043b\u0435\u043d\u043e\u0441\u0442\u043e\u043f\u043d\u044b\u0439 \u0441\u0443\u0441\u0442\u0430\u0432 \u0444\u043e\u0442\u043e", "f": 5, "u": "/uslugi/izgotovlenie-apparata-na-golenostopnyj-sustav"},
+        
+        {"q": "\u0430\u043f\u043f\u0430\u0440\u0430\u0442 \u043d\u0430 \u0433\u043e\u043b\u0435\u043d\u043e\u0441\u0442\u043e\u043f\u043d\u044b\u0439 \u0441\u0443\u0441\u0442\u0430\u0432 \u0446\u0435\u043d\u0430", "f": 3, "u": "/uslugi/izgotovlenie-apparata-na-golenostopnyj-sustav"}
+        
+      ]
+      
+      
+    }
+    </script>
+
+    
+    <script type="application/json" id="rpt-st-children-data">
+    {
+      
+      
+      
+      
+      
+      "293": [
+        
+        {"id": 294, "t": "\u0423\u0441\u043b\u0443\u0433\u0438", "u": "/uslugi", "qc": 0}
+        
+      ]
+      
+      
+      
+      
+      ,
+      "294": [
+        
+        {"id": 295, "t": "\u0418\u0437\u0433\u043e\u0442\u043e\u0432\u043b\u0435\u043d\u0438\u0435 \u043a\u043e\u0440\u0441\u0435\u0442\u0430 \u0434\u043b\u044f \u043a\u043e\u0440\u0440\u0435\u043a\u0446\u0438\u0438 \u043e\u0441\u0430\u043d\u043a\u0438 \u043d\u0430 \u0437\u0430\u043a\u0430\u0437", "u": "/uslugi/izgotovlenie-korseta-dlya-osanki", "qc": 72},
+        
+        {"id": 296, "t": "\u0418\u0437\u0433\u043e\u0442\u043e\u0432\u043b\u0435\u043d\u0438\u0435 \u0438\u043d\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043b\u044c\u043d\u044b\u0445 \u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u0438\u0445 \u0441\u0442\u0435\u043b\u0435\u043a \u043d\u0430 \u0437\u0430\u043a\u0430\u0437", "u": "/uslugi/izgotovlenie-individualnykh-ortopedicheskikh-stelek", "qc": 40},
+        
+        {"id": 297, "t": "\u0418\u0437\u0433\u043e\u0442\u043e\u0432\u043b\u0435\u043d\u0438\u0435 \u043e\u0440\u0442\u0435\u0437\u0430 \u043d\u0430 \u043d\u043e\u0433\u0443 \u043d\u0430 \u0437\u0430\u043a\u0430\u0437", "u": "/uslugi/izgotovlenie-orteza-na-nogu", "qc": 39},
+        
+        {"id": 298, "t": "\u0418\u0437\u0433\u043e\u0442\u043e\u0432\u043b\u0435\u043d\u0438\u0435 \u043e\u0440\u0442\u043e\u043f\u0435\u0434\u0438\u0447\u0435\u0441\u043a\u043e\u0433\u043e \u0430\u043f\u043f\u0430\u0440\u0430\u0442\u0430 \u043d\u0430 \u043d\u043e\u0433\u0443 \u043d\u0430 \u0437\u0430\u043a\u0430\u0437", "u": "/uslugi/izgotovlenie-ortopedicheskogo-apparata-na-nogu", "qc": 15},
+        
+        {"id": 299, "t": "\u0418\u0437\u0433\u043e\u0442\u043e\u0432\u043b\u0435\u043d\u0438\u0435 \u0430\u043f\u043f\u0430\u0440\u0430\u0442\u0430 \u043d\u0430 \u043a\u043e\u043b\u0435\u043d\u043d\u044b\u0439 \u0441\u0443\u0441\u0442\u0430\u0432 \u043d\u0430 \u0437\u0430\u043a\u0430\u0437", "u": "/uslugi/izgotovlenie-apparata-na-kolennyj-sustav", "qc": 9},
+        
+        {"id": 300, "t": "\u0418\u0437\u0433\u043e\u0442\u043e\u0432\u043b\u0435\u043d\u0438\u0435 \u0430\u043f\u043f\u0430\u0440\u0430\u0442\u0430 \u043d\u0430 \u0433\u043e\u043b\u0435\u043d\u043e\u0441\u0442\u043e\u043f\u043d\u044b\u0439 \u0441\u0443\u0441\u0442\u0430\u0432 \u043d\u0430 \u0437\u0430\u043a\u0430\u0437", "u": "/uslugi/izgotovlenie-apparata-na-golenostopnyj-sustav", "qc": 6}
+        
+      ]
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+    }
+    </script>
+  </div>
+  
+
   <footer class="report-footer">
     <div class="report-footer-brand">Отчёт подготовлен <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMIAAAAuCAYAAAB6Z8bIAAAKCklEQVR4AeydCcxdQxTHX2vftxBEhFhiFxJrFFWaCLWlQmy1q6X21l61r0FstUWQSBBrLCGIrajaW5SqEktoKS2KWvr8/i9vXubNd++7c9f3mk5z/t9s55yZOXfOnXlz5972rxX8r16vPwU+AXeBrQtWH9QFC5RigcIdgVYuBTYER4G3cIaRhIGCBXraAmU4gqvzapzhpp62QmjcAm8Bd9AWYZB/I5SchDPcE5EfsoIFesICZTjCzJieDcMZHokpC9nBAl21QBmO8FWHHu2HM0wA63TgyVkUxIMF0lugDEd4MqEZW1E+FWeQQ5xFuB7pQMECXbVA4Y7Qr1+/1+jReyCJ5BBXwjQFZ5gIdiQeKFigKxYo3BGavdif8AfgS5vC+ArOcBVhoGCByi1QiiMwK0yjJ4PA7yANjcIZ3gTLpxEKvMECeS1QiiMwkHeiYZPA0iAtbYvAy+hYiTCQLBBQugVKcQRa/SzIo3tz5MfhDMsSBgoWKN0CeQZrZOMYvGMoWBzkpQ1QcCMIFCzgbQHG3wAwxsI5PsKFOwKV7geKIj2E270oZUHPAmEB7T5eSE8NuuYIq9CITvQrhU+B84CeOfxN2Inu6FSYVMadYTSw7xBZ4iPR0XGZRvkm4GhwIUhbx6mmH8ieD9LKq49HINfnQaXywCkOdDDSVNkIKd8KDAc+dZ8N3/5guYawxx94Twe27l2ixODZCOzsQL85a+StAdy+rCg95A8EWo24ehdTfgxGS1YoY0ZYSIoj8B95o9hRWg4MAZeDvcBi5H8H4kid3yeu0CNfnTV3h6zh1dQzHWNeRtiHmvkTKbgT6GKkrec05AydTySt/EXI3A0m05YTCW3ajMQNDlq7cvAvBG6jfAIYC3zqvgK+h4Ce/2xJ6ENnwtTSTXw30Ea0Q9voegb1EgU2BpIWrc8fty+rkieSA0i/QqUNFiWi/DhQXKuV4QgNxc6fP0hvyqC/hjCKkpY/R0YJVZyn3z3ncrFOsOslfRjpc0E/kJVsWTueVt8iCNxMm7Yj9KVRMB4HstCaCD1BfUsQ5iJ0aHbRSkE3RlvXCyTk6ATlURWO8CIOsBSYHNcNyrTVGnVq1YgMwVB9pnNTWHF4LW2xt3aLuEh1qw923MpOFb3Uh5t+6PprBvJhj+NZg4JjQWZqtuNhFMixCFr0NbGhjI8ibIKqeJIh4kuzlWgJ9Beib4Md6cSuhD4Ut6QyshubSJdD3f0afeICaomxVgHtsWcBO55V9Xa0zefaaimyZNZKLLk0M5Al1orKcRs2beXUalpF7Mn4mW3llRb1MVaqymn4qmAJsDXQuaNEeS6a1tVJA0DbqYm6PBhOo10Ngndh8DywaW6jsPmHgqhl27rki1bTHwe7NUXTBPad0L37jeykiLrlmB8Q2qQ8OamdFxVfOSJzWEJ9WiJOdeQ0KzhZfkmu/R5wRu3sHEo7tFKgOJngvQBoDLkz3Czlx6B18y3cEZKb3M6BIc4g5wKQRFEXLUmmYznG0eylNWgsHzx6OPizw6C1uJPVnSTt0+x7c4G1ayaPVUd9cynUD1qCFmkAthIxEdfBufR13dweiOC/iXoejcgvLas/rZkJZmVHPavsbOrUQLyW3vk45DLwFUHuRZvnKHXLVexeRMPj5ov3MPplbxP6xO1dI6NbunwhZ/Dl7RU+Hb/Rj2OFdpvGk7DtQbJ80gDUPqx+sVcN7curft9eVrJW9G1Mky9q0B5KWdxWXVx+5ReeNnabjqEB7nOP78nbh9lAN0ii1ZEGoiqvrsbsNc3ILhokU1jgxKQZDV3uxkXUzAhbR9JvDZfhKpxguptZRVqO8FEVFRVQR5r3GwqoboFVoQdycTOXyXcdIWpmdA3ow7ODK1RVWo4gVFVfnnrezyMcZLtuAXfWeCeiRUOZjXI9k4jQ6ZUlJ3jVi7O7TJOZMt2dm/JalE9z0dunWVvjDrysesqS07a1ZhhXv56M+x7bcGUzp+UIOh+TWUFFguMqqmd+rWbv+bHh3Nwupt1PA5u0Nf0kM0PS4U1bxo67u4Aa43Z5ZLw/jdGP5Z8iS3sns9I95RTd1p66y553+9TVN5hB0WkL9nEE9I44QRtFta2NISaxEWOiIyGnA3cEqcj9jWDSB6LlU2DT6iR0hqn1wIt0VloW+40FnWw42njLrVlrqUBO502eq6Ce1FUwWvRuto4C2LJ5t0/NADE6dUpTS4g4RM0G02ib2y6jr6dC2qn32vekUQoJWqRXdq9vpfwjZkzbEsNJxNlP+S1H0KnQyvduaZwPjcVYvbzefcynEwk8dv/seIJYbLEOsMUW9loB1/cL2qSZwe37CO7kB1GWhjI9b2p4Dw2RN/bia5Fast2Sxgpd4NU5+67sfcf09TPyx4A26vUEY1C/FaLafTfOoMOBvl14BsbUy8KGIyAo0ufb9faY4r2CMzDQbzkb8wryNr4hbZPSdrnidrnir/NH+QZfkm4Q7dPzDT0h1Zmp+8l8GRg+31DHChBrkHbxfOUMn15iuRdpvVeg9z7+JG5IN7nPSdgwR95/Id/oMOEc8pLoYxgMv0L37BHFfegNcsRroFmArDa6hNTtwPAolG30dpvGqpZ7dj8Ubxv0XA8tV/XxOH10WvJekHLqrdVQoKXR0Frv/BtHm+7L2xx0DAI7W2hbNpD/ILDLB7t1Ur43sHlk5BYbZXPAdeAQMBDYvD7xA4wyZAcDHxmbZxdkDgd3gH+MLoWknwfrO2jMYOS9C2w9ius3mURjgczFQLwGI2KZmwXw670Cw6/wrmZRK4CnDoYDlds4grx5YDxw+9LHoeCZBCRj6+gUH9RyBLUGYe3t5h580pUTuhh5Xs/MWX0QX9As0OYI6jzOMIzQZ6qDrRSahVbd4eI+L09xoGCBYi3QxxGa6rXG0lqrmaws0NNjTWF9prvKWhAqml8sUGg7Ix2BWUFP5/QWlpZKhVbYQZlOl25L3R924AlFwQKlWCDSEVQTA1I/XPTD8XLS7v4uWYWSjlBsQ53aBShUcVAWLOBjgVhHMMIMzvOI65W6uP8JR/l6VVAP5fQsQl91OB6ZIUBHejudGtWbVSOoYwCQHkQCBQtUb4FER1CTGKRTwNrETwY/AkMa5DoXchIZeg6hcj2y1oei9BU7fZlgX8r0iFvrf6IN0oMy7RmvhV45USMz/AkW6JYFvBzBNI5Bq5eqdSpwAHkazFsQ6ktiBJEkJ9DDl28p1VfK5DDHoGdlMBo09rMpCxQs0FULpHIE01IGsNb02udP+m6pRPRhLs0O2yN3C+jzIKUmroBggS5aIJMjqL0MaB070Dcp7SWPiqKgE5X31+v1FaIKQ16wQLctkNkR1HCcQedHNiSe9DRaW6K7w6+zLbAHChboLQvkcgR1hcE9A+hptL76djB52jXS0WSdx9EPaP1falvAoxmE4kDBAr1ngf8BAAD//1VzHSsAAAAGSURBVAMA3F/Ud5Y14EYAAAAASUVORK5CYII=" alt="MEDIA-KIT" width="194" height="46" loading="lazy" decoding="async"></div>
-    <div class="report-footer-date">22.03.2026</div>
+    <div class="report-footer-date">25.03.2026</div>
     <a href="https://t.me/alexkit82" target="_blank" rel="noopener noreferrer" class="report-footer-link">
       <i class="fa-brands fa-telegram"></i> Связаться с нами
     </a>
@@ -4248,14 +7841,75 @@ a:hover { color: #FF8533; }
   var dataEl = document.getElementById('audit-terminal-data');
   var pre = document.getElementById('audit-terminal-pre');
   if (!dataEl || !pre) return;
+
+  /** Сколько визуальных строк (после разбиения по \\n) до кнопки «Продолжить». */
+  var MAX_VISUAL_LINES_BEFORE_CONTINUE = 10;
+
+  /** Пауза перед стартом: пустой терминал. */
+  var INITIAL_PAUSE_MS = 480;
+  /** Целевое время набора приглашения $ scanning… (мс). */
+  var PROMPT_TARGET_MS = 520;
+  /** Целевое время строки «scan complete.» (мс). */
+  var DONE_TARGET_MS = 720;
+  /** Мин./макс. задержка на один символ при адаптивном наборе (мс). */
+  var CHAR_MS_MIN = 6;
+  var CHAR_MS_MAX = 20;
+  /** Нижняя/верхняя граница длительности фазы со строками отчёта (мс). */
+  var LINES_PHASE_MS_MIN = 4500;
+  var LINES_PHASE_MS_MAX = 22000;
+
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var data;
-  try { data = JSON.parse(dataEl.textContent); } catch (e) { return; }
+  try {
+    var jsonRaw = (dataEl.textContent || '').replace(/^\uFEFF/, '').trim();
+    if (!jsonRaw) {
+      throw new Error('пустые данные терминала');
+    }
+    data = JSON.parse(jsonRaw);
+  } catch (e) {
+    if (typeof console !== 'undefined' && console.error) {
+      console.error('[audit-terminal] не удалось разобрать JSON', e);
+    }
+    return;
+  }
   var lines = data.lines || [];
   var domain = data.domain || '';
 
+  /** Один пункт отчёта → несколько строк, если в text есть переносы. */
+  function expandToVisualLines(lineRows) {
+    var out = [];
+    var i, j, chunks;
+    for (i = 0; i < lineRows.length; i++) {
+      var row = lineRows[i];
+      var status = row.status;
+      var raw = row.text == null ? '' : String(row.text);
+      chunks = raw.split(/\r\n|\r|\n|\u2028|\u2029/);
+      for (j = 0; j < chunks.length; j++) {
+        out.push({ status: status, text: chunks[j] });
+      }
+    }
+    return out;
+  }
+
+  function splitVisualLines(all) {
+    var flat = expandToVisualLines(all || []);
+    var total = flat.length;
+    if (total <= MAX_VISUAL_LINES_BEFORE_CONTINUE) {
+      return { first: flat, rest: [], totalVisual: total };
+    }
+    return {
+      first: flat.slice(0, MAX_VISUAL_LINES_BEFORE_CONTINUE),
+      rest: flat.slice(MAX_VISUAL_LINES_BEFORE_CONTINUE),
+      totalVisual: total
+    };
+  }
+
   function wait(ms) {
     return new Promise(function (resolve) { setTimeout(resolve, ms); });
+  }
+
+  function clamp(n, lo, hi) {
+    return Math.max(lo, Math.min(hi, n));
   }
 
   function ensureCursor() {
@@ -4275,20 +7929,112 @@ a:hover { color: #FF8533; }
     if (node.nextSibling !== c) {
       pre.insertBefore(c, node.nextSibling);
     }
-    var wrap = pre.parentElement;
-    if (wrap && wrap.scrollHeight > wrap.clientHeight) {
-      wrap.scrollTop = wrap.scrollHeight;
+    var wrapEl = pre.parentElement;
+    if (wrapEl && wrapEl.scrollHeight > wrapEl.clientHeight) {
+      wrapEl.scrollTop = wrapEl.scrollHeight;
     }
   }
 
-  function countTypingUnits(promptText, doneText) {
-    var n = promptText.length;
+  function linePhaseSteps(lineRows) {
+    var s = 0;
     var j;
-    for (j = 0; j < lines.length; j++) {
-      n += 1 + (lines[j].text || '').length;
+    for (j = 0; j < lineRows.length; j++) {
+      s += 1 + ((lineRows[j].text || '').length);
     }
-    n += 1 + doneText.length;
-    return n;
+    return Math.max(s, 1);
+  }
+
+  /** Задержка до следующего шага: укладываемся в targetMs, символы читаемы. */
+  function delayForStep(phaseStart, targetMs, stepsLeft) {
+    if (stepsLeft <= 0) return CHAR_MS_MIN;
+    var elapsed = Date.now() - phaseStart;
+    var rem = targetMs - elapsed;
+    var d = rem / stepsLeft;
+    return clamp(d, CHAR_MS_MIN, CHAR_MS_MAX);
+  }
+
+  async function typePrompt(promptText, cursor) {
+    var promptSpan = document.createElement('span');
+    promptSpan.className = 'tl tl--prompt';
+    pre.insertBefore(promptSpan, cursor);
+    var i;
+    if (reduce) {
+      promptSpan.textContent = promptText;
+      appendCursorAfter(promptSpan);
+      return;
+    }
+    var t0 = Date.now();
+    var pu = promptText.length;
+    for (i = 0; i < pu; i++) {
+      var left = pu - i;
+      var d = delayForStep(t0, PROMPT_TARGET_MS, left);
+      await wait(d);
+      promptSpan.appendChild(document.createTextNode(promptText.charAt(i)));
+      appendCursorAfter(promptSpan);
+    }
+  }
+
+  async function typeLineRows(lineRows, cursor) {
+    var j, k, t, r;
+    if (reduce) {
+      for (r = 0; r < lineRows.length; r++) {
+        pre.insertBefore(document.createTextNode('\n'), cursor);
+        var s0 = document.createElement('span');
+        s0.className = 'tl tl--' + lineRows[r].status;
+        s0.textContent = lineRows[r].text;
+        pre.insertBefore(s0, cursor);
+        appendCursorAfter(s0);
+        if (r < lineRows.length - 1) await wait(40);
+      }
+      return;
+    }
+
+    var stepsTotal = linePhaseSteps(lineRows);
+    var t0 = Date.now();
+    var targetMs = stepsTotal * 5 + lineRows.length * 90;
+    targetMs = clamp(targetMs, LINES_PHASE_MS_MIN, LINES_PHASE_MS_MAX);
+
+    var stepIndex = 0;
+    for (j = 0; j < lineRows.length; j++) {
+      var dNl = delayForStep(t0, targetMs, stepsTotal - stepIndex);
+      await wait(dNl);
+      stepIndex++;
+      pre.insertBefore(document.createTextNode('\n'), cursor);
+      var lineSpan = document.createElement('span');
+      lineSpan.className = 'tl tl--' + lineRows[j].status;
+      pre.insertBefore(lineSpan, cursor);
+      t = lineRows[j].text || '';
+      for (k = 0; k < t.length; k++) {
+        var dCh = delayForStep(t0, targetMs, stepsTotal - stepIndex);
+        await wait(dCh);
+        stepIndex++;
+        lineSpan.appendChild(document.createTextNode(t.charAt(k)));
+        appendCursorAfter(lineSpan);
+      }
+    }
+  }
+
+  async function typeDone(doneText, cursor) {
+    pre.insertBefore(document.createTextNode('\n'), cursor);
+    var doneSpan = document.createElement('span');
+    doneSpan.className = 'tl tl--info';
+    pre.insertBefore(doneSpan, cursor);
+    if (reduce) {
+      doneSpan.textContent = doneText;
+      pre.appendChild(cursor);
+      return;
+    }
+    var t0 = Date.now();
+    var du = doneText.length;
+    var i;
+    for (i = 0; i < du; i++) {
+      var left = du - i;
+      var d = delayForStep(t0, DONE_TARGET_MS, left);
+      await wait(d);
+      doneSpan.appendChild(document.createTextNode(doneText.charAt(i)));
+      appendCursorAfter(doneSpan);
+    }
+    pre.appendChild(cursor);
   }
 
   async function runTyping() {
@@ -4296,94 +8042,63 @@ a:hover { color: #FF8533; }
     pre.innerHTML = '';
     pre.appendChild(cursor);
 
+    await wait(INITIAL_PAUSE_MS);
+
     var promptText = '$ scanning ' + domain + '...';
     var doneText = 'scan complete.';
-    var totalMs = 2000 / 9;
+    var parts = splitVisualLines(lines);
+    var firstLines = parts.first;
+    var restLines = parts.rest;
+    var totalVisual = parts.totalVisual;
 
-    if (reduce) {
-      var p = document.createElement('span');
-      p.className = 'tl tl--prompt';
-      p.textContent = promptText;
-      pre.insertBefore(p, cursor);
-      lines.forEach(function (row) {
-        pre.insertBefore(document.createTextNode('\n'), cursor);
-        var s = document.createElement('span');
-        s.className = 'tl tl--' + row.status;
-        s.textContent = row.text;
-        pre.insertBefore(s, cursor);
-      });
-      pre.insertBefore(document.createTextNode('\n'), cursor);
-      var inf = document.createElement('span');
-      inf.className = 'tl tl--info';
-      inf.textContent = doneText;
-      pre.insertBefore(inf, cursor);
-      pre.appendChild(cursor);
-      return;
+    await typePrompt(promptText, cursor);
+    await typeLineRows(firstLines, cursor);
+
+    var continueWrap = document.getElementById('audit-terminal-continue-wrap');
+    var continueBtn = document.getElementById('audit-terminal-continue');
+    var continueHint = document.getElementById('audit-terminal-continue-hint');
+    if (restLines.length && continueWrap && continueBtn && continueHint) {
+      continueHint.textContent =
+        'Показано ' +
+        firstLines.length +
+        ' из ' +
+        totalVisual +
+        ' строк.';
+      continueWrap.removeAttribute('hidden');
+      continueWrap.hidden = false;
+      /* Не вызываем scrollIntoView: если читатель уже ушёл скроллом ниже, браузер
+         подтягивает окно к блоку «Продолжить» у терминала — ощущение «улетело наверх». */
+      var continueResolve;
+      var continuePromise = new Promise(function (res) { continueResolve = res; });
+      continueBtn.onclick = function () {
+        continueWrap.hidden = true;
+        continueWrap.setAttribute('hidden', '');
+        continueBtn.onclick = null;
+        continueResolve();
+      };
+      await continuePromise;
+
+      await typeLineRows(restLines, cursor);
+      await typeDone(doneText, cursor);
+    } else {
+      await typeDone(doneText, cursor);
     }
-
-    var units = countTypingUnits(promptText, doneText);
-    var msPerUnit = units > 0 ? totalMs / units : totalMs;
-
-    var promptSpan = document.createElement('span');
-    promptSpan.className = 'tl tl--prompt';
-    pre.insertBefore(promptSpan, cursor);
-    var i, j, k, t;
-    for (i = 0; i < promptText.length; i++) {
-      promptSpan.appendChild(document.createTextNode(promptText.charAt(i)));
-      appendCursorAfter(promptSpan);
-      await wait(msPerUnit);
-    }
-
-    for (j = 0; j < lines.length; j++) {
-      pre.insertBefore(document.createTextNode('\n'), cursor);
-      var lineSpan = document.createElement('span');
-      lineSpan.className = 'tl tl--' + lines[j].status;
-      pre.insertBefore(lineSpan, cursor);
-      t = lines[j].text || '';
-      for (k = 0; k < t.length; k++) {
-        lineSpan.appendChild(document.createTextNode(t.charAt(k)));
-        appendCursorAfter(lineSpan);
-        await wait(msPerUnit);
-      }
-    }
-
-    pre.insertBefore(document.createTextNode('\n'), cursor);
-    var doneSpan = document.createElement('span');
-    doneSpan.className = 'tl tl--info';
-    pre.insertBefore(doneSpan, cursor);
-    for (k = 0; k < doneText.length; k++) {
-      doneSpan.appendChild(document.createTextNode(doneText.charAt(k)));
-      appendCursorAfter(doneSpan);
-      await wait(msPerUnit);
-    }
-    pre.appendChild(cursor);
   }
 
   function startWhenVisible() {
-    var section = document.getElementById('audit-terminal');
     var started = false;
     function go() {
       if (started) return;
       started = true;
-      runTyping();
+      runTyping().catch(function (err) {
+        if (typeof console !== 'undefined' && console.error) {
+          console.error('[audit-terminal]', err);
+        }
+      });
     }
-    if (reduce) {
-      go();
-      return;
-    }
-    if (section && 'IntersectionObserver' in window) {
-      var io = new IntersectionObserver(function (entries) {
-        entries.forEach(function (en) {
-          if (en.isIntersecting) {
-            io.disconnect();
-            go();
-          }
-        });
-      }, { threshold: 0.12, rootMargin: '0px' });
-      io.observe(section);
-    } else {
-      go();
-    }
+    /* Без IntersectionObserver: у .js-reveal.reveal-pending стоит opacity:0 — в части
+       браузеров не приходит «пересечение», вывод не начинается, пока не сработает запасной таймер. */
+    setTimeout(go, 0);
   }
 
   if (document.readyState === 'loading') {
@@ -4431,6 +8146,52 @@ a:hover { color: #FF8533; }
     }
   });
   if (!sections.length) return;
+
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var navRoot = document.querySelector('.report-nav');
+  var touchStartY = 0;
+  var navGestureScroll = false;
+  if (navRoot) {
+    navRoot.addEventListener('touchstart', function (e) {
+      if (!e.touches.length) return;
+      touchStartY = e.touches[0].clientY;
+      navGestureScroll = false;
+    }, { passive: true });
+    navRoot.addEventListener('touchmove', function (e) {
+      if (!e.touches.length) return;
+      if (Math.abs(e.touches[0].clientY - touchStartY) > 14) {
+        navGestureScroll = true;
+      }
+    }, { passive: true });
+  }
+
+  links.forEach(function (link) {
+    link.addEventListener('click', function (e) {
+      if (navGestureScroll) {
+        e.preventDefault();
+        navGestureScroll = false;
+        return;
+      }
+      e.preventDefault();
+      var href = link.getAttribute('href');
+      if (!href || href.charAt(0) !== '#') return;
+      var target = document.querySelector(href);
+      if (!target) return;
+      try {
+        history.pushState(null, '', href);
+      } catch (eH) {}
+      if (reduceMotion) {
+        target.scrollIntoView();
+      } else {
+        try {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } catch (errScroll) {
+          target.scrollIntoView(true);
+        }
+      }
+    });
+  });
+
   var ticking = false;
   function update() {
     var scrollY = window.scrollY + 120;
@@ -4468,6 +8229,205 @@ a:hover { color: #FF8533; }
   }
   window.addEventListener('scroll', toggle, { passive: true });
   toggle();
+})();
+
+(function () {
+  document.querySelectorAll("[data-rpt-sc-toggle]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var container = btn.closest("[data-rpt-sc-cluster]") || btn.closest(".rpt-sc-subs");
+      if (!container) return;
+      var scope = btn.previousElementSibling;
+      if (scope && scope.classList.contains("rpt-sc-subs__grid")) {
+        var rows = scope.querySelectorAll(".rpt-sc-hidden-row");
+      } else {
+        var rows = container.querySelectorAll(":scope > table .rpt-sc-hidden-row, :scope > .rpt-sc-subs .rpt-sc-subs__grid > .rpt-sc-hidden-row");
+      }
+      if (!rows || !rows.length) {
+        rows = container.querySelectorAll(".rpt-sc-hidden-row");
+      }
+      var isOpen = btn.classList.contains("rpt-sc-toggle--open");
+      rows.forEach(function (r) {
+        r.classList.toggle("rpt-sc-hidden-row--visible", !isOpen);
+      });
+      btn.classList.toggle("rpt-sc-toggle--open");
+      var span = btn.querySelector("span");
+      if (span) span.textContent = isOpen ? "Показать ещё (" + rows.length + ")" : "Скрыть";
+    });
+  });
+
+  document.querySelectorAll("[data-rpt-sc-sub-toggle]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var sub = btn.closest("[data-rpt-sc-sub]");
+      if (!sub) return;
+      var body = sub.querySelector(".rpt-sc-sub__body");
+      if (!body) return;
+      var isOpen = sub.classList.contains("rpt-sc-sub--open");
+      body.style.display = isOpen ? "none" : "block";
+      sub.classList.toggle("rpt-sc-sub--open");
+    });
+  });
+})();
+
+(function () {
+  var blocksBtn = document.querySelector("[data-rpt-sc-blocks-toggle]");
+  if (!blocksBtn) return;
+  blocksBtn.addEventListener("click", function () {
+    var isOpen = blocksBtn.classList.contains("rpt-sc-toggle--open");
+    document.querySelectorAll(".rpt-sc-cluster--hidden").forEach(function (cl) {
+      cl.classList.toggle("rpt-sc-cluster--shown", !isOpen);
+    });
+    blocksBtn.classList.toggle("rpt-sc-toggle--open");
+    var span = blocksBtn.querySelector("span");
+    var hidden = document.querySelectorAll(".rpt-sc-cluster--hidden").length;
+    if (span) span.textContent = isOpen ? "Показать ещё кластеров (" + hidden + ")" : "Скрыть кластеры";
+  });
+})();
+
+(function () {
+  var overlay = document.getElementById("rpt-st-overlay");
+  var modal = document.getElementById("rpt-st-modal");
+  var titleEl = document.getElementById("rpt-st-modal-title");
+  var contentEl = document.getElementById("rpt-st-modal-content");
+  var closeBtn = document.getElementById("rpt-st-modal-close");
+  var qDataEl = document.getElementById("rpt-st-queries-data");
+  var cDataEl = document.getElementById("rpt-st-children-data");
+  if (!overlay || !modal) return;
+
+  var queriesData = {};
+  var childrenData = {};
+  try {
+    queriesData = qDataEl ? JSON.parse(qDataEl.textContent) : {};
+  } catch (e) {}
+  try {
+    childrenData = cDataEl ? JSON.parse(cDataEl.textContent) : {};
+  } catch (e) {}
+
+  function esc(s) { return s ? s.replace(/</g, "&lt;") : ""; }
+
+  function buildQueriesTable(rows) {
+    var h = '<div class="rpt-st-modal__table-wrap"><table>';
+    h += '<thead><tr><th>Запрос</th><th class="rpt-st-freq">Частотность</th><th class="rpt-st-url">URL</th></tr></thead><tbody>';
+    rows.forEach(function (r) {
+      h += "<tr><td>" + esc(r.q) + "</td><td class='rpt-st-freq'>" + r.f + "</td><td class='rpt-st-url'>" + esc(r.u) + "</td></tr>";
+    });
+    h += "</tbody></table></div>";
+    return h;
+  }
+
+  function openModal(id, title, hideSubpages) {
+    titleEl.textContent = title;
+    var html = "";
+    var kids = childrenData[id];
+    if (!hideSubpages && kids && kids.length > 0) {
+      html += '<div class="rpt-st-modal__section-title"><i class="fa-solid fa-sitemap"></i> Подстраницы (' + kids.length + ')</div>';
+      html += '<div class="rpt-st-modal__kids">';
+      kids.forEach(function (k) {
+        html += '<div class="rpt-st-modal__kid">';
+        html += '<div class="rpt-st-modal__kid-name">' + esc(k.t) + '</div>';
+        html += '<div class="rpt-st-modal__kid-url">' + esc(k.u) + '</div>';
+        if (k.qc > 0) {
+          html += '<button type="button" class="rpt-st-modal__kid-expand" data-kid-id="' + k.id + '">' + k.qc + ' запр. <i class="fa-solid fa-chevron-down"></i></button>';
+        }
+        html += '<div class="rpt-st-modal__kid-queries" id="kid-q-' + k.id + '" style="display:none"></div>';
+        html += '</div>';
+      });
+      html += '</div>';
+    }
+    var rows = queriesData[id];
+    if (rows && rows.length > 0) {
+      html += '<div class="rpt-st-modal__section-title"><i class="fa-solid fa-magnifying-glass"></i> Запросы страницы (' + rows.length + ')</div>';
+      html += buildQueriesTable(rows);
+    }
+    if (!html) {
+      html = '<p style="color:var(--ink3);text-align:center;padding:20px">Нет данных</p>';
+    }
+    contentEl.innerHTML = html;
+
+    contentEl.querySelectorAll("[data-kid-id]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var kidId = btn.getAttribute("data-kid-id");
+        var wrap = document.getElementById("kid-q-" + kidId);
+        if (!wrap) return;
+        if (wrap.style.display === "none") {
+          var kidRows = queriesData[kidId];
+          if (kidRows) {
+            wrap.innerHTML = buildQueriesTable(kidRows);
+          } else {
+            wrap.innerHTML = '<p style="color:var(--ink3);font-size:12px;padding:8px">Нет запросов</p>';
+          }
+          wrap.style.display = "block";
+          btn.querySelector("i").style.transform = "rotate(180deg)";
+        } else {
+          wrap.style.display = "none";
+          btn.querySelector("i").style.transform = "";
+        }
+      });
+    });
+
+    overlay.classList.add("rpt-st-overlay--visible");
+    modal.classList.add("rpt-st-modal--visible");
+  }
+
+  function closeModal() {
+    overlay.classList.remove("rpt-st-overlay--visible");
+    modal.classList.remove("rpt-st-modal--visible");
+  }
+
+  document.querySelectorAll("[data-rpt-st-open]").forEach(function (badge) {
+    badge.addEventListener("click", function (e) {
+      e.stopPropagation();
+      var hideSubpages = badge.getAttribute("data-rpt-st-hide-subpages") === "1";
+      openModal(badge.getAttribute("data-rpt-st-open"), badge.getAttribute("data-rpt-st-title") || "", hideSubpages);
+    });
+  });
+
+  if (closeBtn) closeBtn.addEventListener("click", closeModal);
+  overlay.addEventListener("click", closeModal);
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") closeModal();
+  });
+
+  document.querySelectorAll("[data-tree-col-toggle]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var col = btn.closest(".rpt-tree-col");
+      if (!col) return;
+      var hidden = col.querySelectorAll(".rpt-tree-col__item--hidden");
+      var isOpen = btn.classList.contains("rpt-tree-col__more--open");
+      hidden.forEach(function (el) {
+        el.classList.toggle("rpt-tree-col__item--shown", !isOpen);
+      });
+      btn.classList.toggle("rpt-tree-col__more--open");
+      btn.textContent = isOpen ? "+" + hidden.length + " ещё" : "Скрыть";
+    });
+  });
+})();
+
+(function () {
+  var openBtn = document.getElementById("rpt-nc-open");
+  var ncOverlay = document.getElementById("rpt-nc-overlay");
+  var ncModal = document.getElementById("rpt-nc-modal");
+  var ncClose = document.getElementById("rpt-nc-modal-close");
+  if (!openBtn || !ncOverlay || !ncModal || !ncClose) return;
+
+  function openNc() {
+    ncOverlay.classList.add("rpt-nc-overlay--visible");
+    ncModal.classList.add("rpt-nc-modal--visible");
+  }
+
+  function closeNc() {
+    ncOverlay.classList.remove("rpt-nc-overlay--visible");
+    ncModal.classList.remove("rpt-nc-modal--visible");
+  }
+
+  openBtn.addEventListener("click", function (e) {
+    e.stopPropagation();
+    openNc();
+  });
+  ncClose.addEventListener("click", closeNc);
+  ncOverlay.addEventListener("click", closeNc);
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") closeNc();
+  });
 })();
 </script>
 </body>
